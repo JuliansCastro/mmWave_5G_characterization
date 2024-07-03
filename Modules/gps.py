@@ -32,7 +32,8 @@ class GPS:
         self.continuous_reading = False     # Continuous GPS reading flag
 
     def readGPSMessages(self):
-        global parsed_data
+        # global parsed_data
+        parsed_data = None
         if self.serial.in_waiting:
             try:
                 (raw_data, parsed_data) = self.ubxr.read()
@@ -47,7 +48,7 @@ class GPS:
         self.gps_data = None
         while self.gps_data is None:
             self.sendGPSMessage()
-            self.gps_data = self.readGPSMessages(self.serial,self.ubxr)
+            self.gps_data = self.readGPSMessages()
             sleep(0.001)
         return self.gps_data
     
@@ -55,6 +56,7 @@ class GPS:
         while self.continuous_reading:
             self.recieveFromGPS()
     
+    # Call this function each time you want to save the GPS data
     def formatGPSData(self):
         distance_N = (self.gps_data.relPosN)/100
         distance_E = (self.gps_data.relPosE)/100
@@ -71,4 +73,5 @@ class GPS:
     def stopGPSThread(self):
         self.continuous_reading = False
         self.thread.join()
+        self.serial.close()
     
