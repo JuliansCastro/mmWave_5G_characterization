@@ -1,3 +1,7 @@
+import sys
+# Route needed by python interpreter to read project's custom classes
+sys.path.append('../5G_CHARACTERIZATION/Modules')
+
 import uhd
 import csv
 import numpy as np
@@ -37,7 +41,7 @@ def doubleThreading() -> None:
             t.toc()
             sleep(0.030)
             print(bw_data)
-    except:
+    except KeyboardInterrupt:
         print('\nCtrl + C -> Interrupted!')
         usrp_UT.stopRxThread()
         aiming_UT.stopAimingThread()
@@ -56,7 +60,8 @@ def oneShotAim():
     aiming_UT = RAiming(serial_port=aim_port, baudrate=aim_baudrate)
     t = TicToc()
 
-    bw_file = FileCSV(name="Measures\\BWMeasure\\USRP01", frequency=None, header=["XZ","YZ", "MAG", "PowerRx"], type="BW_MEAS")
+    # bw_file = FileCSV(name="Measures\\BWMeasure\\USRP01", frequency=None, header=["XZ","YZ", "MAG", "PowerRx"], type="BW_MEAS")
+    bw_file = FileCSV(name="USRP01", frequency=None, header=["XZ","YZ", "MAG", "PowerRx"], type="BW_MEAS")
 
     try:
         usrp_UT.startRxThread()
@@ -68,7 +73,7 @@ def oneShotAim():
             t.toc()
             print(bw_data)
             bw_file.saveData(bw_data)
-    except:
+    except KeyboardInterrupt:
         print('\nCtrl + C -> Interrupted!')
         usrp_UT.stopRxThread()
         aiming_UT.serial.close()
