@@ -1,3 +1,6 @@
+import sys
+# Route needed by python interpreter to read project's custom classes
+sys.path.append('../5G_CHARACTERIZATION/Modules')
 import serial
 import time
 import pytictoc

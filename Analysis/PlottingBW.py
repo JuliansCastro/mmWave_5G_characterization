@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 # Read the CSV file
-CSV = pd.read_csv(r'c:\Users\sofia\OneDrive\Documentos\Comunicaciones\Proyecto\Codes\5gLoss_py\WC\WC\Examples\USRP01_BW_MEAS_19-06-2024-18-37-01.csv')
+CSV = pd.read_csv(r'C:\Users\carlo\Documents\GitHub\5G_characterization\Data\BeamWidth\USRP01_BW_MEAS_05-07-2024-15-59-13.csv')
 
 
 # Extract columns into lists
