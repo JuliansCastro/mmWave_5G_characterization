@@ -28,7 +28,7 @@ class GPS:
         self.gps_data = None
 
         # Attributes needed for threading
-        self.thread = None                  # Continuous GPS reading thread
+        self.gps_thread = None                  # Continuous GPS reading thread
         self.continuous_reading = False     # Continuous GPS reading flag
 
     def readGPSMessages(self):
@@ -50,7 +50,7 @@ class GPS:
             self.sendGPSMessage()
             self.gps_data = self.readGPSMessages()
             #print('verification: ', self.gps_data)
-            sleep(0.001)
+            sleep(0.005)
         return self.gps_data
     
     def continuousGPSReading(self):
@@ -59,20 +59,21 @@ class GPS:
     
     # Call this function each time you want to save the GPS data
     def formatGPSData(self):
+        #if self.gps_data is not None:
         distance_N = (self.gps_data.relPosN)/100
         distance_E = (self.gps_data.relPosE)/100
         distance_D = (self.gps_data.relPosD)/100
-
         relative_coordinates = [distance_N, distance_E, distance_D]
         return relative_coordinates
+        
     
     def startGPSThread(self):
         self.continuous_reading = True
-        self.thread = threading.Thread(target=self.continuousGPSReading, name="GPS_THREAD", daemon=True)
-        self.thread.start()
+        self.gps_thread = threading.Thread(target=self.continuousGPSReading, name="GPS_THREAD", daemon=True)
+        self.gps_thread.start()
     
     def stopGPSThread(self):
         self.continuous_reading = False
-        self.thread.join()
+        self.gps_thread.join()
         self.serial.close()
     

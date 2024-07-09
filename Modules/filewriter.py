@@ -5,15 +5,17 @@ import sys, os
 class FileCSV():
 
     def __init__(self, name:str, frequency, header, type:str) -> None:
-
+        self.DATETIME = dt.now().strftime('%d-%m-%Y-%H-%M-%S')
         match type:
             case "TRX_CAL":
                 self.frequency = frequency
-                self.filename =  name + str(self.frequency/(1e6)) + "MHz_" + dt.now().strftime('%d-%m-%Y-%H-%M-%S') 
-            case "BW_MEAS":
-                self.filename = name + "_" + "BW_MEAS_" + dt.now().strftime('%d-%m-%Y-%H-%M-%S')
+                self.filename =  name + str(self.frequency/(1e6)) + "MHz_" + self.DATETIME + ".csv"
+            case "MEAS":
+                self.filename = name + "_MEAS_" + self.DATETIME + ".csv"
+            case "METADATA":
+                self.filename = name + "_METADATA_" + self.DATETIME + ".csv"
             case _:
-                raise ValueError("Invalid type of file, types available:\n-TRX_CAL\n-BW_MEAS")
+                raise ValueError("Invalid type of file, types available:\n-TRX_CAL\n-BW_MEAS\n-METADATA")
                 
         
         self.file_exist = False

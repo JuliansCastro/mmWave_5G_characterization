@@ -1,11 +1,3 @@
-import csv
-import numpy as np
-import scipy.io as sio
-from tkinter import *
-from tkinter import ttk
-from datetime import datetime 
-from time import sleep
-from io import BufferedReader
 import threading
 from serial import Serial
 
