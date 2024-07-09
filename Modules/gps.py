@@ -23,7 +23,7 @@ class GPS:
         self.ubxr = UBXReader(BufferedReader(self.serial), protfilter=UBX_PROTOCOL)
         self.msg_class = "NAV"
         self.msg_id = "NAV-RELPOSNED"
-        self.msg = UBXMessage(self.msg_class, self.msg_id, GET)
+        self.msg = UBXMessage(self.msg_class, self.msg_id, GET, SET)
 
         self.gps_data = None
 
@@ -49,6 +49,7 @@ class GPS:
         while self.gps_data is None:
             self.sendGPSMessage()
             self.gps_data = self.readGPSMessages()
+            #print('verification: ', self.gps_data)
             sleep(0.001)
         return self.gps_data
     

@@ -48,7 +48,7 @@ def receiveFromGPS(stream, lock, message, ubxreader):
 
 ############### Modulos GPS ###############
 
-port = "COM4"  # COM7 is Rx module
+port = "COM5"  # COM7 is Rx module
 baudrate = 19200
 timeout = 0.1
 
