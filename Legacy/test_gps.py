@@ -6,20 +6,19 @@ from gps import GPS
 from pytictoc import TicToc
 
 
-gps_port = "COM8"
+gps_port = "COM11"
 
 try:
     timer = TicToc()
     gps_rtk = GPS(port=gps_port, baudrate=19200, timeout=0.1)
     gps_rtk.startGPSThread()
-    # sleep(5)
+    sleep(5)
     timer.tic()
     counter = 0
-    while True:        
-        if gps_rtk.gps_data is not None:
-            print(counter, gps_rtk.formatGPSData())
-            counter += 1
-            #timer.toc()
+    while True:
+        print(counter, gps_rtk.formatGPSData())
+        counter += 1
+        #timer.toc()
         if timer.tocvalue() >= 60.0:
             break
     #timer.toc()

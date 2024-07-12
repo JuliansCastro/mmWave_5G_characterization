@@ -45,12 +45,12 @@ class GPS:
         self.serial.write(self.msg.serialize())
 
     def recieveFromGPS(self):
-        self.gps_data = None
-        while self.gps_data is None:
+        gps_data = None
+        while gps_data is None:
             self.sendGPSMessage()
-            self.gps_data = self.readGPSMessages()
-            #print('verification: ', self.gps_data)
+            gps_data = self.readGPSMessages()
             sleep(0.005)
+        self.gps_data = gps_data
         return self.gps_data
     
     def continuousGPSReading(self):

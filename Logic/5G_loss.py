@@ -2,8 +2,9 @@ import sys
 # Route needed by python interpreter to read project's custom classes
 sys.path.append('../5G_CHARACTERIZATION/Modules')
 
-from usrp import USRP
 from gps import GPS
+from usrp import USRP
+from time import sleep
 from aiming import RAiming
 from pytictoc import TicToc
 from filewriter import FileCSV
@@ -12,7 +13,7 @@ from filewriter import FileCSV
 def oneShot():
     # Serial ports
     aim_port = "COM13"
-    gps_port = "COM8"
+    gps_port = "COM11"
 
     # Baudrates
     aim_baudrate = 19200
@@ -38,22 +39,20 @@ def oneShot():
         gps_rtk = GPS(port=gps_port, baudrate=gps_baudrate, timeout=0.1)
         gps_rtk.startGPSThread()
 
+        sleep(5) # Wait for GPS to stabilize in the thread
+
         
         chronometer.tic()
         while True:
             powerRx = usrp_UT.getPower_dBm(usrp_UT.rx_samples)
-            ##powerRx = 0.0
+            gps_data = gps_rtk.formatGPSData()
+            aiming = aiming_UT.getAiming()
+            loss_data = [gps_data[0],gps_data[1],gps_data[2],powerRx,
+                        aiming[0],aiming[1],aiming[2]]
             
-            if gps_rtk.gps_data is not None:
-                gps_data = gps_rtk.formatGPSData()
-                #gps_data = [0.0, 0.0, 0.0]
-                aiming = aiming_UT.getAiming()
-                loss_data = [gps_data[0],gps_data[1],gps_data[2],powerRx,
-                            aiming[0],aiming[1],aiming[2]]
-                
-                print("\t", counter, loss_data)
-                file.saveData(loss_data)
-                counter += 1
+            print("\t", counter, loss_data)
+            file.saveData(loss_data)
+            counter += 1
     except KeyboardInterrupt:
         chronometer.toc()
         print('\nCtrl + C -> Interrupted!')
