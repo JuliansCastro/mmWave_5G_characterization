@@ -21,7 +21,7 @@ from filewriter import FileCSV
 def doubleThreading() -> None:
     frequency = 500e6
     gain_rx = 24.7
-    aim_port = "COM3"
+    aim_port = "COM13"
     aim_baudrate = 19200
 
     usrp_UT = USRP(rx_center_freq=frequency, rx_gain=gain_rx)
@@ -61,7 +61,7 @@ def oneShotAim():
     t = TicToc()
 
     # bw_file = FileCSV(name="Measures\\BWMeasure\\USRP01", frequency=None, header=["XZ","YZ", "MAG", "PowerRx"], type="BW_MEAS")
-    bw_file = FileCSV(name="Data/BeamWidth/USRP01_BW", frequency=None, header=["XZ","YZ", "MAG", "PowerRx"], type="BW_MEAS")
+    bw_file = FileCSV(name="Data/BeamWidth/USRP01_BW", frequency=None, header=["XZ","YZ", "MAG", "PowerRx"], type="MEAS")
 
     try:
         usrp_UT.startRxThread()
