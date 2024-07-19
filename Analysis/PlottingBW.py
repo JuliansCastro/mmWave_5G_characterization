@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 # aGregar una etapa de filtrado Kalman
 # Read the CSV file
-CSV = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\BeamWidth\USRP01_BW_MEAS_05-07-2024-15-59-13')
+CSV = pd.read_csv(r'C:\Users\JuliansCastro\Documents\5G_characterization\Data\BeamWidth\USRP01_BW_MEAS_19-07-2024-17-32-56.csv')
 
 # Check if the necessary columns exist
 if 'XZ' not in CSV.columns or 'YZ' not in CSV.columns or 'PowerRx' not in CSV.columns:
@@ -58,7 +58,7 @@ fig.suptitle('Ancho de haz')
 ax1.plot(unique_angleXZ, max_powerXZ)
 ax1.set_ylabel('Elevación')
 
-ax2.plot(unique_angleYZ, max_powerYZ)
+ax2.plot(AngleYZ_adjusted, Power)
 ax2.set_xlabel('Ángulo')
 ax2.set_ylabel('Acimutal')
 

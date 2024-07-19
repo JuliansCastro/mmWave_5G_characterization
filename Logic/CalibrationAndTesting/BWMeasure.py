@@ -70,7 +70,7 @@ def oneShotAim():
             powerRx = usrp_UT.getPower_dBm(usrp_UT.rx_samples)
             bw_data = aiming_UT.getAiming()
             bw_data.append(powerRx)
-            t.toc()
+            #t.toc()
             print(bw_data)
             bw_file.saveData(bw_data)
     except KeyboardInterrupt:

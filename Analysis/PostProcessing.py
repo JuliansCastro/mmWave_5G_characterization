@@ -46,7 +46,7 @@ def circular_difference(a, b):
 fixed_position = (dis_n1, dis_e1) = (0, 0)  # Replace with actual values
 
 # Read the CSV file
-df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_10-07-2024\5G_loss_MEAS_10-07-2024-16-24-27.csv')
+df = pd.read_csv(r'C:\Users\JuliansCastro\Documents\5G_characterization\Data\BeamWidth\USRP01_BW_MEAS_19-07-2024-17-32-56.csv')
 
 # Filter rows where BW is greater than or equal to a specific value
 BW = 10  # Change this value as needed
