@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from math import radians, sin, cos, sqrt, atan2
+import numpy as np
 '''
 # Function to calculate the distance between two points (lat, lon, alt)
 def calculate_distance(lat1, lon1, alt1, lat2, lon2, alt2):
@@ -46,10 +47,10 @@ def circular_difference(a, b):
 fixed_position = (dis_n1, dis_e1) = (0, 0)  # Replace with actual values
 
 # Read the CSV file
-df = pd.read_csv(r'C:\Users\JuliansCastro\Documents\5G_characterization\Data\BeamWidth\USRP01_BW_MEAS_19-07-2024-17-32-56.csv')
+df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_10-07-2024\5G_loss_MEAS_10-07-2024-16-24-27.csv')
 
 # Filter rows where BW is greater than or equal to a specific value
-BW = 10  # Change this value as needed
+BW = 36.94  # Change this value as needed
 # Get the first value of the 'YZ' column
 first_value = df['YZ'].iloc[0]
 # Filter the DataFrame according to the circular condition
@@ -57,12 +58,152 @@ filtered_df = df[df['YZ'].apply(lambda x: circular_difference(x, first_value) <=
 
 # Calculate the distance for each row
 distance = filtered_df.apply(lambda row: calculate_distance(dis_n1, dis_e1, row['Dist_N'], row['Dist_E']), axis=1)
+'''
+# Calculate correlation coefficient
+correlation_coef = np.corrcoef(filtered_df['Dist_N'], filtered_df['Dist_E'])[0, 1]
 
-# Plot Distance as a function of Power
-#plt.plot(filtered_df['PowerRX'], filtered_df['distance'], 'o-')
-plt.plot(distance, filtered_df['PowerRx'], 'o-')
+plt.scatter(filtered_df['Dist_N'], filtered_df['Dist_E'], label='Datos Dispersos', color='red')
+
+# Add linear regression line
+plt.plot(np.unique(filtered_df['Dist_N']), np.poly1d(np.polyfit(filtered_df['Dist_N'], filtered_df['Dist_E'], 1))(np.unique(filtered_df['Dist_N'])),
+         color='blue', label=f'Correlación: {correlation_coef:.2f}')
+'''
+coeffs = np.polyfit(distance, filtered_df['PowerRx'], 4)
+poly = np.poly1d(coeffs)
+fitted_curve = poly(distance)
+print(poly)
+
+first_valuePower = filtered_df['PowerRx'].iloc[0]
+Losses = first_valuePower-filtered_df['PowerRx']
+
+'''
+
+plt.plot(distance, Losses, 'o-')
+# plt.plot(distance, fitted_curve, label=f'Polinomio ajustado (grado 2): y = {coeffs[0]:.2f}x^2 + {coeffs[1]:.2f}x + {coeffs[2]:.2f}', color='red')
 plt.ylabel('Power')
 plt.xlabel('Distance')
-plt.title('Distance as a function of Time')
+plt.title('Power vs Distance')
 plt.grid(True)
 plt.show()
+
+'''
+
+from scipy.optimize import curve_fit
+
+# Filtrar valores no válidos para el ajuste logarítmico
+valid_indices = distance > 0
+distance_valid = distance[valid_indices]
+power_rx_valid = Losses[valid_indices]
+
+# Función polinómica de grado 2
+def polynomial_func(x, a, b, c, d, e, f):
+    return a * x**2 + b * x + c + d * x**3 + e * x**4 + f * x**5 
+
+# Función exponencial
+def exponential_func(x, a, b):
+    return a * np.exp(b * x)
+
+# Función logarítmica
+def logarithmic_func(x, a, b):
+    return a * np.log(x) + b + a * x**2 + b * x
+
+# Ajustar las curvas
+popt_poly, pcov_poly = curve_fit(polynomial_func, distance, Losses)
+popt_exp, pcov_exp = curve_fit(exponential_func, distance, Losses)
+
+# Proveer parámetros iniciales para el ajuste logarítmico
+initial_params = [1, 1]  # Ajustar estos valores según sea necesario
+
+try:
+    popt_log, pcov_log = curve_fit(logarithmic_func, distance_valid, power_rx_valid, p0=initial_params, maxfev=5000)
+    log_fit_success = True
+except RuntimeError:
+    log_fit_success = False
+    print("Logarithmic fit did not converge")
+
+# Imprimir las ecuaciones en la consola
+poly_eq = f"{popt_poly[0]:.5f} * x^2 + {popt_poly[1]:.5f} * x + {popt_poly[2]:.5f}"
+exp_eq = f"{popt_exp[0]:.5f} * exp({popt_exp[1]:.5f} * x)"
+if log_fit_success:
+    log_eq = f"{popt_log[0]:.5f} * log(x) + {popt_log[1]:.5f}"
+else:
+    log_eq = "Logarithmic fit did not converge"
+
+print("Polynomial Fit Equation: ", poly_eq)
+print("Exponential Fit Equation: ", exp_eq)
+print("Logarithmic Fit Equation: ", log_eq)
+
+# Graficar los datos y las curvas ajustadas
+plt.scatter(distance, Losses, label='Data')
+plt.plot(distance, polynomial_func(distance, *popt_poly), 'r-', label='Polynomial Fit')
+plt.plot(distance, exponential_func(distance, *popt_exp), 'g-', label='Exponential Fit')
+
+if log_fit_success:
+    plt.plot(distance, logarithmic_func(distance, *popt_log), 'b-', label='Logarithmic Fit')
+
+plt.xlabel('Distance')
+plt.ylabel('PowerRx')
+plt.legend()
+plt.show()
+
+'''
+from scipy.optimize import curve_fit
+
+# Filtrar valores no válidos para el ajuste logarítmico
+valid_indices = distance > 0
+distance_valid = distance[valid_indices]
+power_rx_valid = filtered_df['PowerRx'][valid_indices]
+
+# Definir funciones para ajustar
+
+# Función polinómica de grado 2
+def polynomial_func(x, a, b, c):
+    return a * x**2 + b * x + c
+
+# Función exponencial
+def exponential_func(x, a, b):
+    return a * np.exp(b * x)
+
+# Función logarítmica
+def logarithmic_func(x, a, b):
+    return a * np.log(x) + b
+
+# Ajustar las curvas
+popt_poly, pcov_poly = curve_fit(polynomial_func, distance, filtered_df['PowerRx'])
+popt_exp, pcov_exp = curve_fit(exponential_func, distance, filtered_df['PowerRx'])
+
+# Proveer parámetros iniciales para el ajuste logarítmico
+initial_params = [1, 1]  # Ajustar estos valores según sea necesario
+
+try:
+    popt_log, pcov_log = curve_fit(logarithmic_func, distance_valid, power_rx_valid, p0=initial_params, maxfev=5000)
+    log_fit_success = True
+except RuntimeError:
+    log_fit_success = False
+    print("Logarithmic fit did not converge")
+
+# Imprimir las ecuaciones en la consola
+poly_eq = f"{popt_poly[0]:.5f} * x^2 + {popt_poly[1]:.5f} * x + {popt_poly[2]:.5f}"
+exp_eq = f"{popt_exp[0]:.5f} * exp({popt_exp[1]:.5f} * x)"
+if log_fit_success:
+    log_eq = f"{popt_log[0]:.5f} * log(x) + {popt_log[1]:.5f}"
+else:
+    log_eq = "Logarithmic fit did not converge"
+
+print("Polynomial Fit Equation: ", poly_eq)
+print("Exponential Fit Equation: ", exp_eq)
+print("Logarithmic Fit Equation: ", log_eq)
+
+# Graficar los datos y las curvas ajustadas
+plt.scatter(distance, filtered_df['PowerRx'], label='Data')
+plt.plot(distance, polynomial_func(distance, *popt_poly), 'r-', label='Polynomial Fit')
+plt.plot(distance, exponential_func(distance, *popt_exp), 'g-', label='Exponential Fit')
+
+if log_fit_success:
+    plt.plot(distance, logarithmic_func(distance, *popt_log), 'b-', label='Logarithmic Fit')
+
+plt.xlabel('Distance')
+plt.ylabel('PowerRx')
+plt.legend()
+plt.show()
+'''

@@ -1,65 +1,62 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-# aGregar una etapa de filtrado Kalman
+from scipy.optimize import curve_fit
+
 # Read the CSV file
-CSV = pd.read_csv(r'C:\Users\JuliansCastro\Documents\5G_characterization\Data\BeamWidth\USRP01_BW_MEAS_19-07-2024-17-32-56.csv')
+CSV = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\BeamWidth\USRP01_BW_MEAS_19-07-2024-17-32-56.csv')
+#CSV = CSV[CSV['PowerRx'] > -45]
 
 # Check if the necessary columns exist
-if 'XZ' not in CSV.columns or 'YZ' not in CSV.columns or 'PowerRx' not in CSV.columns:
-    raise ValueError('CSV file does not contain the necessary columns: XZ, YZ, PowerRx')
+if 'MAG' not in CSV.columns or 'PowerRx' not in CSV.columns:
+    raise ValueError('CSV file does not contain the necessary columns: MAG, PowerRx')
 
 # Extract columns into lists
-AngleXZ = np.array(CSV['XZ'])
-AngleYZ = np.array(CSV['YZ'])
+AngleAci = np.array(CSV['MAG'])
 Power = np.array(CSV['PowerRx'])
 
-# Angel range [-180 180]
-AngleXZ_adjusted = np.where(AngleXZ > 180, AngleXZ - 360, AngleXZ)
-AngleYZ_adjusted = np.where(AngleYZ > 180, AngleYZ - 360, AngleYZ)
-
-# Check if adjusted angles are empty
-if len(AngleXZ_adjusted) == 0 or len(AngleYZ_adjusted) == 0:
-    raise ValueError('Adjusted angle arrays are empty')
+# Adjust angles
+AngleAci_adjusted = np.where(AngleAci > 180, AngleAci - 360, AngleAci)
 
 # Check if Power array is empty
 if len(Power) == 0:
     raise ValueError('Power array is empty')
 
-# Initialize lists to store unique angles and corresponding max powers
-unique_angleXZ = []
-max_powerXZ = []
+# Find the maximum value for the angle adjustment
+max_value = CSV.loc[CSV['PowerRx'].idxmax()]
+Center = AngleAci_adjusted - max_value['MAG']
 
-# Iterate over unique values in AngleXZ
-for angle in np.unique(AngleXZ_adjusted):
-    powers_at_angle = Power[AngleXZ_adjusted == angle]
-    if len(powers_at_angle) == 0:
-        print(f'No power values found for angle XZ: {angle}')
-        continue
-    unique_angleXZ.append(angle)
-    max_powerXZ.append(np.max(powers_at_angle))
+# Filter out NaN and Inf values
+valid_indices = np.isfinite(Center) & np.isfinite(Power)
+Center = Center[valid_indices]
+Power = Power[valid_indices] 
 
-# Initialize lists to store unique angles and corresponding max powers
-unique_angleYZ = []
-max_powerYZ = []
+# Define the Gaussian function
+def gaussian(x, A, mu, sigma, const):
+    return A * np.exp(- (x - mu)**2 / (2 * sigma**2)) + const
 
-# Iterate over unique values in AngleYZ
-for angle in np.unique(AngleYZ_adjusted):
-    powers_at_angle = Power[AngleYZ_adjusted == angle]
-    if len(powers_at_angle) == 0:
-        print(f'No power values found for angle YZ: {angle}')
-        continue
-    unique_angleYZ.append(angle)
-    max_powerYZ.append(np.max(powers_at_angle))
+# Adjust initial parameters
+initial_guess = [max(Power), 0, 1, min(Power)]  # [A, mu, sigma, const]
+try:
+    popt, pcov = curve_fit(gaussian, Center, Power, p0=initial_guess, maxfev=10000)
+except RuntimeError as e:
+    print(f"Error: {e}")
+    # Optionally: Try different initial guesses or data scaling
+    raise
 
-# Plotting
-fig, (ax1, ax2) = plt.subplots(2, 1)
-fig.suptitle('Ancho de haz')
-ax1.plot(unique_angleXZ, max_powerXZ)
-ax1.set_ylabel('Elevación')
+# Extract the parameters
+A, mu, sigma, const = popt
 
-ax2.plot(AngleYZ_adjusted, Power)
-ax2.set_xlabel('Ángulo')
-ax2.set_ylabel('Acimutal')
+# Generate x values for the Gaussian fit line
+x_fit = np.linspace(min(Center), max(Center), 1000)
+y_fit = gaussian(x_fit, *popt)
 
+# Plot the data and the Gaussian fit
+plt.plot(Center, Power, 'b.', label='Data')
+plt.plot(x_fit, y_fit, 'r-', label=f'Gaussian Fit: A={A:.2f}, μ={mu:.2f}, σ={sigma:.2f}, c={const:.2f}')
+plt.title('Azimuthal')
+plt.xlabel('Angle (°)')
+plt.ylabel('Power')
+plt.legend()
 plt.show()
+
