@@ -1,7 +1,8 @@
 import threading
+import numpy as np
 from time import sleep
-from io import BufferedReader
 from serial import Serial
+from io import BufferedReader
 from pyubx2 import ( 
     UBXMessage ,
     UBXReader ,
@@ -24,7 +25,8 @@ class GPS:
         self.msg_class = "NAV"
         self.msg_id_1 = "NAV-RELPOSNED"     # realtive coordinates 
         self.msg_id_2 = "NAV-POSLLH"        # abs coordinates 
-        self.msg = UBXMessage(self.msg_class, self.msg_id_2, GET, SET)
+        self.msg_1 = UBXMessage(self.msg_class, self.msg_id_1, GET, SET)
+        self.msg_2 = UBXMessage(self.msg_class, self.msg_id_2, GET, SET)
 
         self.gps_data = None
 
@@ -43,7 +45,8 @@ class GPS:
         return parsed_data
     
     def sendGPSMessage(self):
-        self.serial.write(self.msg.serialize())
+        self.serial.write(self.msg_1.serialize())
+        self.serial.write(self.msg_2.serialize())
 
     def recieveFromGPS(self):
         gps_data = None
@@ -61,11 +64,17 @@ class GPS:
     # Call this function each time you want to save the GPS data
     def formatGPSData(self):
         #if self.gps_data is not None:
-        distance_N = (self.gps_data.relPosN)/100
-        distance_E = (self.gps_data.relPosE)/100
-        distance_D = (self.gps_data.relPosD)/100
-        relative_coordinates = [distance_N, distance_E, distance_D]
-        return relative_coordinates
+        #print('\n', self.gps_data, self.gps_data.relPosN, '\n')
+        if hasattr(self.gps_data, 'relPosN'):
+            distance_N = (self.gps_data.relPosN)/100
+            distance_E = (self.gps_data.relPosE)/100
+            distance_D = (self.gps_data.relPosD)/100
+            coordinates = [distance_N, distance_E, distance_D, 'relPos']
+        if hasattr(self.gps_data, 'lon'):
+            coordinates = [self.gps_data.lon, self.gps_data.lat, self.gps_data.height, 'absPos']
+        
+        #coordinates = np.append(relative_coordinates, abs_coordinates)
+        return coordinates
     
     def format_abs_GPSData(self):
         try:

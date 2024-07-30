@@ -10,7 +10,7 @@ from filewriter import FileCSV
 gps_port = "COM5"
 
 try:
-    gps_file = FileCSV(name="Data/Meas_GPS/GPS", frequency=None, header=["disN","disE", "disD"], type="MEAS")
+    gps_file = FileCSV(name="Data/Meas_GPS/GPS", frequency=None, header=["pos1","pos2", "pos3", "pos_type"], type="MEAS")
 
     timer = TicToc()
     gps_rtk = GPS(port=gps_port, baudrate=19200, timeout=0.1)
