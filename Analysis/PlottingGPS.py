@@ -12,17 +12,20 @@ df = df[~((df['lat'] == 0) & (df['lon'] == 0) & (df['height'] == 0))]
 latitudes = df['lat']
 longitudes = df['lon']
 altitudes = df['height']
+Norte = df['disN']
+Este = df['disE']
+Abajo = df['disD']
 
 
-# Leer el archivo CSV
-file_path1 = 'Data\Meas_GPS\GPS_MEAS_29-07-2024-17-23-31.csv'  # Reemplaza con la ruta a tu archivo
-df1 = pd.read_csv(file_path1)
-# Filtrar filas donde latitud, longitud y altitud son todas 0
-df1 = df1[~((df1['lat'] == 0) & (df1['lon'] == 0) & (df1['height'] == 0))]
-# Supongamos que las columnas se llaman 'Latitud', 'Longitud' y 'Altitud'
-latitudes1 = df1['lat']
-longitudes1 = df1['lon']
-altitudes1 = df1['height']
+# # Leer el archivo CSV
+# file_path1 = 'Data\Meas_GPS\GPS_MEAS_29-07-2024-17-23-31.csv'  # Reemplaza con la ruta a tu archivo
+# df1 = pd.read_csv(file_path1)
+# # Filtrar filas donde latitud, longitud y altitud son todas 0
+# df1 = df1[~((df1['lat'] == 0) & (df1['lon'] == 0) & (df1['height'] == 0))]
+# # Supongamos que las columnas se llaman 'Latitud', 'Longitud' y 'Altitud'
+# latitudes1 = df1['lat']
+# longitudes1 = df1['lon']
+# altitudes1 = df1['height']
 # Punto inicial (0, 0, 0)
 initial_point = np.array([-74.0827278, 4.6388707, 2589131])
 
@@ -35,7 +38,7 @@ distances = np.sqrt((latitudes - initial_point[0])**2 +
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.plot(latitudes, longitudes, altitudes, label='Recorrido1')
-ax.plot(latitudes1, longitudes1, altitudes1, label='Recorrido2')
+#ax.plot(Norte, Este, Abajo, label='Recorrido2')
 ax.set_xlabel('Latitud')
 ax.set_ylabel('Longitud')
 ax.set_zlabel('Altitud')
