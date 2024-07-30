@@ -1,5 +1,5 @@
 import sys
-sys.path.append('C:/Users/JuliansCastro/Documents/5G_characterization/Modules')
+sys.path.append('../5G_CHARACTERIZATION/Modules')
 
 from time import sleep
 from gps import GPS
