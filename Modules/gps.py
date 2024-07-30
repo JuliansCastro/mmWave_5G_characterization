@@ -22,8 +22,9 @@ class GPS:
         self.serial = Serial(port=self.port, baudrate=self.baudrate, timeout=self.timeout)
         self.ubxr = UBXReader(BufferedReader(self.serial), protfilter=UBX_PROTOCOL)
         self.msg_class = "NAV"
-        self.msg_id = "NAV-RELPOSNED"
-        self.msg = UBXMessage(self.msg_class, self.msg_id, GET, SET)
+        self.msg_id_1 = "NAV-RELPOSNED"     # realtive coordinates 
+        self.msg_id_2 = "NAV-POSLLH"        # abs coordinates 
+        self.msg = UBXMessage(self.msg_class, self.msg_id_2, GET, SET)
 
         self.gps_data = None
 
@@ -65,6 +66,14 @@ class GPS:
         distance_D = (self.gps_data.relPosD)/100
         relative_coordinates = [distance_N, distance_E, distance_D]
         return relative_coordinates
+    
+    def format_abs_GPSData(self):
+        try:
+            #print(self.gps_data)
+            abs_coordinates = [self.gps_data.lon, self.gps_data.lat, self.gps_data.height]
+        except AttributeError:
+            abs_coordinates = [0,0,0]
+        return abs_coordinates
         
     
     def startGPSThread(self):
