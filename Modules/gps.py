@@ -16,18 +16,32 @@ from pytictoc import TicToc
 
 class GPS:
     
-    def __init__(self, port = 'COM7', baudrate = 19200, timeout = 0.1):
+    def __init__(self, port = 'COM7', baudrate = 19200, timeout = 0.1, type="all"):
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
         self.serial = Serial(port=self.port, baudrate=self.baudrate, timeout=self.timeout)
         self.ubxr = UBXReader(BufferedReader(self.serial), protfilter=UBX_PROTOCOL)
         self.msg_class = "NAV"
-        self.msg_id_1 = "NAV-RELPOSNED"     # realtive coordinates 
-        self.msg_id_2 = "NAV-POSLLH"        # abs coordinates 
-        self.msg_1 = UBXMessage(self.msg_class, self.msg_id_1, GET, SET)
-        self.msg_2 = UBXMessage(self.msg_class, self.msg_id_2, GET, SET)
+        self.msg_id = {"abs": "NAV-POSLLH", "rel": "NAV-RELPOSNED"}
+        # self.msg_id_1 = "NAV-RELPOSNED"     # realtive coordinates 
+        # self.msg_id_2 = "NAV-POSLLH"        # abs coordinates
 
+        # Choosing NAV type
+        self.msg = []
+        if type in self.msg_id.keys():
+            self.msg.append(UBXMessage(self.msg_class, self.msg_id[type], GET, SET))
+        elif type == "all":
+            for key in self.msg_id.keys():
+                self.msg.append(UBXMessage(self.msg_class, self.msg_id[key], GET, SET))
+        else:
+            self.msg = None
+            raise ValueError("Unrecognized acquisition type, only 'abs', 'rel' , 'all' are valid.")
+              
+        # self.msg_2 = UBXMessage(self.msg_class, self.msg_id_2, GET, SET)
+        # self.msg_1 = UBXMessage(self.msg_class, self.msg_id_1, GET, SET)
+
+        #Attribute who stores the most recent data
         self.gps_data = None
 
         # Attributes needed for threading
@@ -45,8 +59,10 @@ class GPS:
         return parsed_data
     
     def sendGPSMessage(self):
-        self.serial.write(self.msg_1.serialize())
-        self.serial.write(self.msg_2.serialize())
+        for msgidx in self.msg:
+            self.serial.write(msgidx.serialize())
+        # self.serial.write(self.msg_1.serialize())
+        # self.serial.write(self.msg_2.serialize())
 
     def recieveFromGPS(self):
         gps_data = None
@@ -76,6 +92,7 @@ class GPS:
         #coordinates = np.append(relative_coordinates, abs_coordinates)
         return coordinates
     
+    # DEPRECATED FUNCTION : format_abs_GPSData since 31/07/2024
     def format_abs_GPSData(self):
         try:
             #print(self.gps_data)
