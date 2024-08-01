@@ -6,7 +6,7 @@ from gps import GPS
 from pytictoc import TicToc
 
 
-gps_port = "COM5"
+gps_port = "COM6"
 
 try:
     timer = TicToc()

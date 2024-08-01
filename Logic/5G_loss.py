@@ -13,7 +13,7 @@ from filewriter import FileCSV
 def oneShot():
     # Serial ports
     aim_port = "COM13"
-    gps_port = "COM11"
+    gps_port = "COM6"
 
     # Baudrates
     aim_baudrate = 19200
@@ -29,14 +29,14 @@ def oneShot():
     try:
         chronometer = TicToc()
 
-        file = FileCSV(name="Data/5G_loss/5G_loss", frequency=None, header=["Dist_N","Dist_E","Dist_D", "PowerRx","XZ","YZ", "MAG"], type="MEAS")
+        file = FileCSV(name="Data/5G_loss/5G_loss", frequency=None, header=["R_N/Lon","R_E/Lat","R_D/Hgt", "PosType", "PowerRx","XZ","YZ", "MAG"], type="MEAS")
         file_metadata = FileCSV(name="Data/5G_loss/Metadata/5G_loss", frequency=None, header=["time_elapsed","mumber_of_readings","reading_rate","time_per_reading","usrp_rx_thread","aiming_thread","gps_thread"], type="METADATA")
         
         usrp_UT = USRP(rx_center_freq=frequency, rx_gain=gain_rx)
         usrp_UT.startRxThread()
         aiming_UT = RAiming(serial_port=aim_port, baudrate=aim_baudrate)
         #aiming_UT.startAimingThread()
-        gps_rtk = GPS(port=gps_port, baudrate=gps_baudrate, timeout=0.1)
+        gps_rtk = GPS(port=gps_port, baudrate=gps_baudrate, timeout=0.1, type="rel")
         gps_rtk.startGPSThread()
 
         sleep(5) # Wait for GPS to stabilize in the thread
@@ -47,7 +47,7 @@ def oneShot():
             powerRx = usrp_UT.getPower_dBm(usrp_UT.rx_samples)
             gps_data = gps_rtk.formatGPSData()
             aiming = aiming_UT.getAiming()
-            loss_data = [gps_data[0],gps_data[1],gps_data[2],powerRx,
+            loss_data = [gps_data[0],gps_data[1],gps_data[2],gps_data[3],powerRx,
                         aiming[0],aiming[1],aiming[2]]
             
             print("\t", counter, loss_data)
