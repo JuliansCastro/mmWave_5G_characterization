@@ -4,17 +4,18 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Leer el archivo CSV
-file_path = 'Data/Meas_GPS/GPS_MEAS_29-07-2024-17-25-09.csv'  # Reemplaza con la ruta a tu archivo
+file_path = 'Data\Meas_GPS\GPS_MEAS_30-07-2024-16-24-24.csv'  # Reemplaza con la ruta a tu archivo
 df = pd.read_csv(file_path)
 # Filtrar filas donde latitud, longitud y altitud son todas 0
-df = df[~((df['lat'] == 0) & (df['lon'] == 0) & (df['height'] == 0))]
+absPos = df[df['pos_type']=='absPos']
+relPos = df[df['pos_type']=='relPos']
 # Supongamos que las columnas se llaman 'Latitud', 'Longitud' y 'Altitud'
-latitudes = df['lat']
-longitudes = df['lon']
-altitudes = df['height']
-Norte = df['disN']
-Este = df['disE']
-Abajo = df['disD']
+latitudes = absPos['pos2']
+longitudes = absPos['pos1']
+altitudes = absPos['pos3']
+disN = relPos['pos1']
+disE = relPos['pos2']
+disD = relPos['pos3']
 
 
 # # Leer el archivo CSV
@@ -37,8 +38,8 @@ distances = np.sqrt((latitudes - initial_point[0])**2 +
 # Graficar el recorrido en 3D
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.plot(latitudes, longitudes, altitudes, label='Recorrido1')
-#ax.plot(Norte, Este, Abajo, label='Recorrido2')
+#ax.plot(latitudes, longitudes, altitudes, label='Recorrido1')
+ax.plot(disN, disE, disD, label='Recorrido2')
 ax.set_xlabel('Latitud')
 ax.set_ylabel('Longitud')
 ax.set_zlabel('Altitud')
