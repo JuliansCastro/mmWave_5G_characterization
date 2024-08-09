@@ -47,17 +47,21 @@ def circular_difference(a, b):
 fixed_position = (dis_n1, dis_e1) = (0, 0)  # Replace with actual values
 
 # Read the CSV file
-df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_10-07-2024\5G_loss_MEAS_10-07-2024-16-24-27.csv')
+df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024-13-10-13.csv')
+
+df1 = df[df['PosType']=='relPos']
 
 # Filter rows where BW is greater than or equal to a specific value
-BW = 36.94  # Change this value as needed
+BW = 10  # Change this value as needed
 # Get the first value of the 'YZ' column
-first_value = df['YZ'].iloc[0]
+first_value1 = df1.loc[df1['PowerRx'].idxmax()]
+first_value = first_value1['MAG']
+df_max = df1.loc[df1.groupby('R_N/Lon')['PowerRx'].idxmax()]
 # Filter the DataFrame according to the circular condition
-filtered_df = df[df['YZ'].apply(lambda x: circular_difference(x, first_value) <= BW)]
+filtered_df = df_max[df_max['MAG'].apply(lambda x: circular_difference(x, first_value) <= BW)]
 
 # Calculate the distance for each row
-distance = filtered_df.apply(lambda row: calculate_distance(dis_n1, dis_e1, row['Dist_N'], row['Dist_E']), axis=1)
+distance = filtered_df.apply(lambda row: calculate_distance(dis_n1, dis_e1, row['R_N/Lon'], row['R_E/Lat']), axis=1)
 '''
 # Calculate correlation coefficient
 correlation_coef = np.corrcoef(filtered_df['Dist_N'], filtered_df['Dist_E'])[0, 1]
@@ -76,7 +80,7 @@ print(poly)
 first_valuePower = filtered_df['PowerRx'].iloc[0]
 Losses = first_valuePower-filtered_df['PowerRx']
 
-'''
+
 
 plt.plot(distance, Losses, 'o-')
 # plt.plot(distance, fitted_curve, label=f'Polinomio ajustado (grado 2): y = {coeffs[0]:.2f}x^2 + {coeffs[1]:.2f}x + {coeffs[2]:.2f}', color='red')
@@ -85,7 +89,6 @@ plt.xlabel('Distance')
 plt.title('Power vs Distance')
 plt.grid(True)
 plt.show()
-
 '''
 
 from scipy.optimize import curve_fit
@@ -145,7 +148,7 @@ plt.xlabel('Distance')
 plt.ylabel('PowerRx')
 plt.legend()
 plt.show()
-
+'''
 '''
 from scipy.optimize import curve_fit
 
