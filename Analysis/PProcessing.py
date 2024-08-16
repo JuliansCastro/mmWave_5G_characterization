@@ -43,7 +43,7 @@ def adjust_MAG(MAG, reference_MAG):
 # Función para corregir los valores de PowerRx basada en una ecuación proporcionada
 def correct_PowerRx(row, beamwidth_func):
     correction = beamwidth_func(0) - beamwidth_func(row['MAG'])
-    return row['PowerRx'] 
+    return row['PowerRx'] + correction
 
 # Cargar el archivo CSV
 df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024-11-54-55.csv')
@@ -128,6 +128,7 @@ plt.show()
 # Gráfica para absPos
 plt.figure(figsize=(10, 6))
 plt.plot(absPos_df['Distance'], absPos_df['PowerRx'], label='absPos', marker='o')
+plt.ylim((-50 -10))
 plt.xlabel('Distancia')
 plt.ylabel('PowerRx')
 plt.title('PowerRx vs Distancia (absPos)')
