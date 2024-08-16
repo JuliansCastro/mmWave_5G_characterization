@@ -13,7 +13,7 @@ from filewriter import FileCSV
 def oneShot():
     # Serial ports
     aim_port = "COM13"
-    gps_port = "COM6"
+    gps_port = "COM14"
 
     # Baudrates
     aim_baudrate = 19200
@@ -36,7 +36,7 @@ def oneShot():
         usrp_UT.startRxThread()
         aiming_UT = RAiming(serial_port=aim_port, baudrate=aim_baudrate)
         #aiming_UT.startAimingThread()
-        gps_rtk = GPS(port=gps_port, baudrate=gps_baudrate, timeout=0.1, type="rel")
+        gps_rtk = GPS(port=gps_port, baudrate=gps_baudrate, timeout=0.1, type="all")
         gps_rtk.startGPSThread()
 
         sleep(5) # Wait for GPS to stabilize in the thread
