@@ -47,12 +47,12 @@ def circular_difference(a, b):
 fixed_position = (dis_n1, dis_e1) = (0, 0)  # Replace with actual values
 
 # Read the CSV file
-df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024-13-10-13.csv')
+df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024-11-49-59.csv')
 
 df1 = df[df['PosType']=='relPos']
 
 # Filter rows where BW is greater than or equal to a specific value
-BW = 10  # Change this value as needed
+BW = 1  # Change this value as needed
 # Get the first value of the 'YZ' column
 first_value1 = df1.loc[df1['PowerRx'].idxmax()]
 first_value = first_value1['MAG']
