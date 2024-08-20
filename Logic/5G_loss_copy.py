@@ -23,7 +23,7 @@ def oneShot():
 
     # Serial ports
     aim_port = "COM13"
-    gps_port = "COM6"
+    gps_port = "COM14" 
 
     # Baudrates
     aim_baudrate = 19200
@@ -97,8 +97,8 @@ def oneShot():
 
 
     finally:
-        time_elapsed = chronometer.tocvalue()
-        reading_rate = counter/chronometer.tocvalue()
+        # time_elapsed = chronometer.tocvalue()
+        reading_rate = counter/time_elapsed# chronometer.tocvalue()
 
         print("\n\nResults:")
         print("\tTime elapsed: ", time_elapsed)
