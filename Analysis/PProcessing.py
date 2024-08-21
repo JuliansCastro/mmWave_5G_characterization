@@ -46,7 +46,7 @@ def correct_PowerRx(row, beamwidth_func):
     return row['PowerRx'] + correction
 
 # Cargar el archivo CSV
-df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024-11-54-55.csv')
+df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024-10-57-59.csv')
 
 
 
@@ -56,9 +56,9 @@ relPos_df = df[df['PosType'] == 'relPos'].copy()
 absPos_df = df[df['PosType'] == 'absPos'].copy()
 
 # Punto específico de referencia (latitud, longitud, altitud en metros)
-ref_lat = 4.63600920  # Latitud de referencia en grados
-ref_lon = -74.08900510  # Longitud de referencia en grados
-ref_alt = 2574028  # Altitud de referencia en milimetros
+ref_lat = 4.63600930
+ref_lon = -74.08904440
+ref_alt = 2579220
 
 
 # Calcular distancias para relPos y absPos
