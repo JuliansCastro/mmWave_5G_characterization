@@ -54,9 +54,9 @@ y_fit = gaussian(x_fit, *popt)
 # Plot the data and the Gaussian fit
 plt.plot(Center, Power, 'b.', label='Data')
 plt.plot(x_fit, y_fit, 'r-', label=f'Gaussian Fit: A={A:.2f}, μ={mu:.2f}, σ={sigma:.2f}, c={const:.2f}')
-plt.title('Azimuthal')
+plt.title('Beam Width')
 plt.xlabel('Angle (°)')
-plt.ylabel('Power')
+plt.ylabel('Power [dB]')
 plt.legend()
 plt.show()
 

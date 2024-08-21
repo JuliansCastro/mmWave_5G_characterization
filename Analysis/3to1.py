@@ -52,21 +52,20 @@ def procesar_archivo(csv_file, beamwidth_func):
 
 # Listado de archivos CSV
 archivos_csv = [
-    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024-11-43-57.csv',
-    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024-11-49-59.csv',
-    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024-11-54-55.csv'
+    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_20-08-2024-14-15-00.csv',
+    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_20-08-2024-14-23-43.csv'
 ]
 
 # Definir la función de ancho de haz
 beamwidth_func = lambda MAG: 27.11 * np.exp(- (MAG - 0.51)**2 / (2 * 7.02**2))  # Función de ejemplo
 
 # Colores para diferenciar cada archivo en la gráfica
-colores = ['r', 'g', 'b']
+colores = ['r', 'b', 'g', 'c', 'm', 'y']
 
 # Inicializar lista para almacenar resultados
 relPos_data = []
 
-# Procesar cada archivo y almacenar los resultados
+# Procesar cada archivo y almacenar los resultados  
 for i, csv_file in enumerate(archivos_csv):
     relPos_df = procesar_archivo(csv_file, beamwidth_func)
     relPos_data.append((relPos_df, colores[i]))
@@ -76,10 +75,10 @@ plt.figure(figsize=(10, 6))
 for i, (relPos_df, color) in enumerate(relPos_data):
     plt.plot(relPos_df['Distance'], relPos_df['PowerRx'], label=f'Data {i+1}', marker='o', color=color)
 
-plt.ylim((-50, -10))
+# plt.ylim((-40, -10))
 plt.xlabel('Distancia [m]')
 plt.ylabel('Power [dB]')
-plt.title('Power vs Distancia (Greenhouse 2)')
+plt.title('Power vs Distancia (Greenhouse 4)')
 plt.legend()
 plt.grid(True)
 plt.show()

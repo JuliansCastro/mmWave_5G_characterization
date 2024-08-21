@@ -46,7 +46,7 @@ def correct_PowerRx(row, beamwidth_func):
     return row['PowerRx'] + correction
 
 # Cargar el archivo CSV
-df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024-10-57-59.csv')
+df = pd.read_csv(r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024\5G_loss_MEAS_01-08-2024-13-03-52.csv')
 
 
 
