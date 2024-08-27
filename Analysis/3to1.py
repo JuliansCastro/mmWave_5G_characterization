@@ -57,8 +57,8 @@ def procesar_archivo(csv_file, beamwidth_func, distanceB):
 archivos_csv = [
     r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024\5G_loss_MEAS_01-08-2024-12-58-35.csv'
 ]
-
-#CSV = r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024\5G_loss_MEAS_08-08-2024-10-47-50.csv' # Greenhouse1
+#CSV =r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_20-08-2024-13-17-20.csv'  #Greenhouse 3
+#CSV = r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024\5G_loss_MEAS_08-08-2024-10-53-18.csv' # Greenhouse1
 CSV = r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024\5G_loss_MEAS_08-08-2024-11-43-57.csv' # Greenhouse2
 # Espacio libre las 3, 4 y 6, se seleccionó para la regreción la 3
 # Greenhouse 1 el primero 
@@ -86,7 +86,7 @@ for i, (relPos_df, color) in enumerate(relPos_data):
     log_distance = 20 * np.log10(relPos_df['Distance']).values.reshape(-1, 1)
     
     # Crear un rango de valores logarítmicos para la predicción
-    x_value = np.linspace(0, 35, 100).reshape(-1, 1)
+    x_value = np.linspace(0, 1000, 20000).reshape(-1, 1)
     
     # Ajustar el modelo de regresión lineal
     model = LinearRegression()
@@ -97,21 +97,19 @@ for i, (relPos_df, color) in enumerate(relPos_data):
     y_pred = model.predict(x_value)
     P0 = float(y_pred[0])
     c = 299792458     # En m/s
-    f = 60.48e9  #en Hz
-    wlenght = c/f   # Lambda 
+    fc = 60.48e9  #en Hz
+    wlenght = c/fc   # Lambda 
     A = 10**((P0+20*np.log10(4*np.pi/wlenght))/10)
     P = 10*np.log10(A)-20*np.log10(4*np.pi/wlenght)-x_value
     Pf = float(y_pred[99])
     fin = float(x_value[99])
-    
-    ec=((Pf-P0)/(fin-0))
     
     B_matrix = np.array([[P0+20*np.log10(4*np.pi/wlenght)], [Pf+20*np.log10(4*np.pi*fin/wlenght)]])
 
     A_matrix = np.array([[1.0, -20.0], [1.0, float(-20*fin)]])
     
     X_matrix = np.dot(np.linalg.inv(A_matrix), B_matrix)
-    print(X_matrix[0])
+
     A_losses = 10**(X_matrix[0]/10)
     alpha_losses = X_matrix[1]
 
@@ -119,27 +117,31 @@ for i, (relPos_df, color) in enumerate(relPos_data):
     P_eq = 10*np.log10(A)-20*np.log10(4*np.pi/wlenght)-x_value[99]
     P_eq0 = 10*np.log10(A)-20*np.log10(4*np.pi/wlenght)-x_value[0]
 
-    ec_1 = ((P_eq-P_eq0)/(fin-0))
-    
-    print(ec)
-    print(ec_1)
     #plt.plot(relPos_df['Distance'], relPos_df['PowerRx'], label=f'Data {i+1}', marker='o', color=color)
-    plt.scatter(log_distance, relPos_df['PowerRx'], label=f'Data {i+1}', marker='o', color=color)
-    plt.plot(x_value, y_pred, label=f'Regresión', color='b')
+    #plt.scatter(log_distance, relPos_df['PowerRx'], label=f'Espacio libre', marker='o', color=color)
+    #plt.plot(x_value, y_pred, label=f'Regresión espacio libre', color='b')
     # plt.plot(x_value, P_1, label=f'Ecuación con pérdidas', color='g')
-    plt.plot(x_value, P, label=f'Ecuación sin pérdidas', color='r')
+    #plt.plot(x_value, P, label=f'Ecuación espacio libre', color='r')
 def Power_Losses(x, alpha): #Function of signal Rx Power with losses
     return 10*np.log10(A/((4*np.pi*10**(x/20)/wlenght)**2))+10*np.log10(np.e**(-2*alpha*10**(x/20)))
 
 
 CSV_log = 20 * np.log10(CSV_df['Distance'])
 alpha , a_var = curve_fit(Power_Losses, CSV_log, CSV_df['PowerRx'].values)
-print('Alpha Greenhouse1',alpha)
-plt.scatter(CSV_log, CSV_df['PowerRx'], label=f'Data 1', marker='o', color='m')
-plt.plot(x_value, Power_Losses(x_value,alpha), label=f'Ecuación invernadero', color='y')
-plt.xlabel('20*log(Distance)')
-plt.ylabel('Power [dB]')
-plt.title('Power vs 20*log(Distance)')
+print('Alpha Greenhouse2',alpha)
+h = 1
+PL =  1-10*np.log10((np.e**(-2*alpha*x_value))/(4*np.pi*x_value/wlenght)**2)
+PL_RMa = 20*np.log10(40*np.pi*x_value*fc/3)+min(0.03*h**1.72,10)*np.log10(x_value)-min(0.044*h**1.72,14.77)+0.002*np.log10(h)*x_value
+#plt.scatter(CSV_log, CSV_df['PowerRx'], label=f'Invernadero', marker='o', color='m')
+#plt.plot(x_value, Power_Losses(x_value,alpha), label=f'Ecuación invernadero', color='y')
+plt.plot(x_value, PL, label=f'Fitting', color='y')
+plt.plot(x_value, PL_RMa, label=f'3GPP URA', color='r')
+#plt.xlabel('20*log(Distance)')
+#plt.ylabel('Power [dB]')
+plt.xlabel('Distance [m]')
+plt.ylabel('Path Loss [dB]')
+plt.title('Path Loss vs Distance')
+#plt.title('Power vs 20*log(Distance)')
 plt.legend()
 plt.grid(True)
 plt.show()
