@@ -58,7 +58,7 @@ archivos_csv = [
     r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024\5G_loss_MEAS_01-08-2024-12-58-35.csv'
 ]
 
-#CSV = r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data/5G_loss/5G_loss_MEAS_20-08-2024-14-23-43.csv'   #Greenhouse4
+#CSV = r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data/5G_loss/5G_loss_MEAS_20-08-2024-14-23-43.csv'   #Greenhouse 4
 #CSV =r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_20-08-2024-13-17-20.csv'  #Greenhouse 3
 #CSV = r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024\5G_loss_MEAS_08-08-2024-10-53-18.csv' # Greenhouse1
 CSV = r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_08-08-2024\5G_loss_MEAS_08-08-2024-11-43-57.csv' # Greenhouse2
@@ -78,7 +78,7 @@ for i, csv_file in enumerate(archivos_csv):
     relPos_df = procesar_archivo(csv_file, beamwidth_func,20)
     relPos_data.append((relPos_df, colores[i]))
     
-CSV_df = procesar_archivo(CSV,beamwidth_func,20)
+CSV_df = procesar_archivo(CSV,beamwidth_func,15)
 
 
 # Graficar PowerRx en función de la distancia para relPos
@@ -114,8 +114,12 @@ for i, (relPos_df, color) in enumerate(relPos_data):
 def Power_Losses(x, alpha): #Function of signal Rx Power with losses
     return 10*np.log10(A/((4*np.pi*10**(x/20)/wlenght)**2))+10*np.log10(np.e**(-2*alpha*10**(x/20)))
 
-def PL_InHModel(x, a, b):
-    f_x = a+b*np.log10(x)+20.0*np.log10(fc)
+# def PL_InHModel(x, a, b):
+#     f_x = a+b*np.log10(x)+20.0*np.log10(fc)
+#     return f_x
+
+def PL_InHModel(x, a, b, c):
+    f_x = a+b*np.log10(x)+20.0*np.log10(fc)+c*fc**0.248*x**0.588*0
     return f_x
 
 PL_meas = 1-(CSV_df['PowerRx']-10*np.log10(A))
@@ -126,17 +130,23 @@ print('Alpha Greenhouse2',alpha)
 x_value = np.linspace(0.1, 40, 20000)
 PL =  1-10*np.log10((np.e**(-2*alpha*x_value))/(4*np.pi*x_value/wlenght)**2) # Path Loss custom model 
 
-
+PL1 =  1-10*np.log10((np.e**(-2*alpha*CSV_df['Distance']))/(4*np.pi*CSV_df['Distance']/wlenght)**2)
 #print("PL Model: ",PL_InHModel(x_value,37.2,20))
-a, b = curve_fit(PL_InHModel, x_value, PL)
+#a, b = curve_fit(PL_InHModel, x_value, PL)
+a, b = curve_fit(PL_InHModel, CSV_df['Distance'], PL_meas, p0 = [0, 0, 0], bounds=([-np.inf, 0, 0], [np.inf,np.inf,np.inf]))
+print(a)
+correlation =np.corrcoef(PL_meas,PL_InHModel(CSV_df['Distance'],a[0],a[1],a[2]))[0, 1]
+correlation = round(correlation, 3)
 
+correlation1 =np.corrcoef(PL_meas,PL1)[0, 1]
+correlation1 = round(correlation1, 3)
 # plt.scatter(CSV_log, CSV_df['PowerRx'], label=f'Invernadero', marker='o', color='m') # LogLog
 # plt.plot(x_value, Power_Losses(x_value,alpha), label=f'Ecuación invernadero', color='y') # LogLog
-plt.plot(x_value, PL, label=f'Fitting', color='y')
+plt.plot(x_value, PL, label=f'Exponencial Model, R = {correlation1}', color='y')
 plt.plot(CSV_df['Distance'], PL_meas, label=f'PL Measures', color='g')
-plt.plot(x_value, PL_InHModel(x_value,a[0],a[1]), label=f'InH Modified', color='r') # 3GPP base model 
-#plt.xlabel('20*log(Distance)')
-plt.ylabel('Power [dB]')
+plt.plot(x_value, PL_InHModel(x_value,a[0],a[1], a[2]), label=f'InH Modified, R = {correlation}', color='r') # 3GPP base model 
+# plt.xlabel('20*log(Distance)')
+# plt.ylabel('Power [dB]')
 plt.xlabel('Distance [m]')
 plt.ylabel('Path Loss [dB]')
 plt.title('Path Loss vs Distance')
