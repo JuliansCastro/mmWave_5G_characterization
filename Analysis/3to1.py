@@ -120,7 +120,7 @@ def Power_Losses(x, alpha): #Function of signal Rx Power with losses
 #     return f_x
 
 def PL_InHModel(x, a, b, c):
-    f_x = a+b*np.log10(x)+20.0*np.log10(fc)+c*fc**0.248*x**0.588
+    f_x = a+b*np.log10(x)+20.0*np.log10((fc*1e-9))+c*(fc*1e-9)**0.248*x**0.588
     return f_x
 
 PL_meas = 1-(CSV_df['PowerRx']-10*np.log10(A))
@@ -133,10 +133,10 @@ PL =  1-10*np.log10((np.e**(-2*alpha*x_value))/(4*np.pi*x_value/wlenght)**2) # P
 PL1 =  1-10*np.log10((np.e**(-2*alpha*CSV_df['Distance']))/(4*np.pi*CSV_df['Distance']/wlenght)**2)
 #print("PL Model: ",PL_InHModel(x_value,37.2,20))
 #a, b = curve_fit(PL_InHModel, x_value, PL)
-a, b = curve_fit(PL_InHModel, CSV_df['Distance'], PL_meas, p0 = [0, 0, 0], bounds=([-np.inf, 0, 0], [np.inf,np.inf,np.inf]))
+a, b = curve_fit(PL_InHModel, CSV_df['Distance'], PL_meas)
 print(a)
 correlation =np.corrcoef(PL_meas,PL_InHModel(CSV_df['Distance'],a[0],a[1],a[2]))[0, 1]
-correlation = round(correlation, 3)
+correlation = round(correlation, 20)
 
 
 ###
@@ -147,7 +147,6 @@ CSV1_log = 20 * np.log10(CSV1_df['Distance'])
 alpha1 , a_var1 = curve_fit(Power_Losses, CSV1_log, CSV1_df['PowerRx'].values)
 
 a1, b1 = curve_fit(PL_InHModel, CSV1_df['Distance'], PL1_meas, p0 = [0, 0, 0], bounds=([-np.inf, 0, 0], [np.inf,np.inf,np.inf]))
-print(a1)
 correlation1 =np.corrcoef(PL1_meas,PL_InHModel(CSV1_df['Distance'],a1[0],a1[1],a1[2]))[0, 1]
 correlation1 = round(correlation1, 3)
 
