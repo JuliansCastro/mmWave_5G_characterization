@@ -59,12 +59,15 @@ A, mu, sigma, const = popt
 # Generar los valores x para la línea ajustada
 x_fit = np.linspace(min(Center_filtered), max(Center_filtered), 1000)
 y_fit = gaussian(x_fit, *popt)
-
+plt.xlim(-10, 10)
 # Graficar los datos filtrados y el ajuste gaussiano
-plt.plot(Center_filtered, Power_filtered, 'b.', label='Datos Filtrados')
-plt.plot(x_fit, y_fit, 'r-', label=f'Ajuste Gaussiano: A={A:.2f}, μ={mu:.2f}, σ={sigma:.2f}, c={const:.2f}')
-plt.title('Beam Width (Filtrado)')
-plt.xlabel('Ángulo (°)')
-plt.ylabel('Potencia [dB]')
+plt.scatter(Center_filtered, Power_filtered, color='c', label='Measured Data',s=10)
+plt.plot(x_fit, y_fit, color='#FF1A1A', label=f'Gaussian Curve Fitting: A={A:.2f}, μ={mu:.2f}, σ={sigma:.2f}, c={const:.2f}', linewidth=3)
+plt.title('Beam Width',fontsize=23)
+plt.xlabel('Angle (°)',fontsize=19)
+plt.ylabel('Power [dB]',fontsize=19)
+plt.legend(fontsize=18)  # Ajusta el tamaño de la fuente de las etiquetas de la gráfica
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
 plt.legend()
 plt.show()

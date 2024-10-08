@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Leer el archivo CSV
-file_path = 'Data\Meas_GPS\GPS_MEAS_30-07-2024-16-24-24.csv'  # Reemplaza con la ruta a tu archivo
+file_path = 'Data\Meas_GPS\GPS_MEAS_30-07-2024-16-25-35.csv'  # Reemplaza con la ruta a tu archivo
 df = pd.read_csv(file_path)
 # Filtrar filas donde latitud, longitud y altitud son todas 0
 absPos = df[df['pos_type']=='absPos']
@@ -36,24 +36,35 @@ distances = np.sqrt((latitudes - initial_point[0])**2 +
                     (altitudes - initial_point[2])**2)
 
 # Graficar el recorrido en 3D
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-#ax.plot(latitudes, longitudes, altitudes, label='Recorrido1')
-ax.plot(disN, disE, disD, label='Recorrido2')
-ax.set_xlabel('Latitud')
-ax.set_ylabel('Longitud')
-ax.set_zlabel('Altitud')
-ax.set_title('Recorrido en 3D')
-ax.legend()
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# #ax.plot(latitudes, longitudes, altitudes, label='Recorrido1')
+# ax.plot(disN, disE, disD, label='Recorrido2')
+# ax.set_xlabel('Latitud')
+# ax.set_ylabel('Longitud')
+# ax.set_zlabel('Altitud')
+# ax.set_title('Recorrido en 3D')
+# ax.legend()
 
-# # Graficar la distancia a lo largo del tiempo (suponiendo que hay una columna 'Tiempo')
-# if 'Tiempo' in df.columns:
-#     tiempos = df['Tiempo']
-#     plt.figure()
-#     plt.plot(tiempos, distances, label='Distancia vs. Tiempo')
-#     plt.xlabel('Tiempo')
-#     plt.ylabel('Distancia')
-#     plt.title('Distancia desde el punto inicial a lo largo del tiempo')
-#     plt.legend()
+# # # Graficar la distancia a lo largo del tiempo (suponiendo que hay una columna 'Tiempo')
+# # if 'Tiempo' in df.columns:
+# #     tiempos = df['Tiempo']
+# #     plt.figure()
+# #     plt.plot(tiempos, distances, label='Distancia vs. Tiempo')
+# #     plt.xlabel('Tiempo')
+# #     plt.ylabel('Distancia')
+# #     plt.title('Distancia desde el punto inicial a lo largo del tiempo')
+# #     plt.legend()
 
+# plt.show()
+# Graficar el recorrido en 2D
+plt.figure()
+plt.plot(disN, disE,linewidth=3)
+plt.xlabel('North Displacement [m]',fontsize=19)
+plt.ylabel('East Displacement [m]',fontsize=19)
+plt.title('2D Trajectory',fontsize=23)
+plt.legend()
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+# Mostrar la gráfica
 plt.show()
