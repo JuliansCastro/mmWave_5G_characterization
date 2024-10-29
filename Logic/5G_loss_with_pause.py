@@ -1,3 +1,23 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description:  Capture power in dBm from USRP, GPS data in absolute ({long},{lat},{height}[deg,mm]) and relative 
+                position({PosNorth},{PosEast},{PosDown}[cm]), aiming ({angle_xz},{angle_yz},{heading}[deg]),
+                to measure 5G signal loss in a specific area. Capacity to pause and continue the measurement.
+'''
+
+
 import sys
 # Route needed by python interpreter to read project's custom classes
 sys.path.append('../5G_CHARACTERIZATION/Modules')
@@ -6,10 +26,10 @@ from gps import GPS
 from usrp import USRP
 from time import sleep
 from aiming import RAiming
-from pytictoc import TicToc
-from filewriter import FileCSV
 from pynput import keyboard
+from pytictoc import TicToc
 from threading import Event
+from filewriter import FileCSV
 
 def oneShot():
 
@@ -67,7 +87,7 @@ def oneShot():
             chronometer.tocvalue(restart=True) # Restart chronometer for more precise time measuring
             while not measuring_flag.is_set():
                 powerRx = usrp_UT.getPower_dBm(usrp_UT.rx_samples)
-                gps_data = gps_rtk.formatGPSData()
+                gps_data = gps_rtk.format_rel_GPSData()
                 aiming = aiming_UT.getAiming()
                 loss_data = [gps_data[0],gps_data[1],gps_data[2],gps_data[3],powerRx,
                             aiming[0],aiming[1],aiming[2]]

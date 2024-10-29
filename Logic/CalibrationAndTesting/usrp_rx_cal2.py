@@ -1,14 +1,32 @@
-import uhd
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description: Script to measure power in dBm using USRP and  R&S vectorial Generator,
+               to perform a calibration of the USRP receiver.
+'''
+
+
+import sys
+# Route needed by python interpreter to read project's custom classes
+sys.path.append('../5G_CHARACTERIZATION/Modules')
+
 import time
-import csv
-import numpy as np
-import scipy.io as sio
-import instrument
 import usrp
-from tkinter import *
-from tkinter import ttk
-from datetime import datetime 
 import filewriter
+import instrument
+import numpy as np
+from tkinter import *
 
 if __name__=="__main__":
 
@@ -18,7 +36,7 @@ if __name__=="__main__":
     #rx_header = ["Gen Power", "Rx Power", "Rx Gain"]
     freq = 500e6
 
-    cal_file = filewriter.FileCSV(rx_name,freq,rx_header)
+    cal_file = filewriter.FileCSV(rx_name,freq,rx_header, type="TRX_CAL")
 
     # Using default configuration
     usrpUT = usrp.USRP(rx_center_freq=freq)
@@ -53,7 +71,7 @@ if __name__=="__main__":
     #         time.sleep(0.25)
     #         # Create buffer and open stream only when a measure is needed
     #         # usrpUT.setReceiver()
-    #         # usrpUT.setRecieveBuffer()
+    #         # usrpUT.setReceiveBuffer()
     #         for i in range(num_frames):
     #             usrpUT.startRxStream()
     #             samples = usrpUT.getSamples()

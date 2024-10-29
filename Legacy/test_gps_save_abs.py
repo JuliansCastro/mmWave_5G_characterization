@@ -1,5 +1,24 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description: test and save GPS data of absolute position in a CSV file.
+'''
+
+
 import sys
-sys.path.append('C:/Users/JuliansCastro/Documents/5G_characterization/Modules')
+# Route needed by python interpreter to read project's custom classes
+sys.path.append('../5G_CHARACTERIZATION/Modules')
 
 from time import sleep
 from gps import GPS
@@ -7,9 +26,9 @@ from pytictoc import TicToc
 from filewriter import FileCSV
 
 
-gps_port = "COM5"
-
 try:
+    gps_port = "COM14"
+    
     gps_file = FileCSV(name="Data/Meas_GPS/GPS", frequency=None, header=["lon","lat", "height"], type="MEAS")
 
     timer = TicToc()

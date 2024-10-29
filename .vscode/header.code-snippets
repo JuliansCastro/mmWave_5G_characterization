@@ -1,0 +1,25 @@
+{
+	"Encabezado de Python": {
+		"prefix": "header",
+		"body": [
+			"'''",
+			"Develop by:",
+			"",
+			"- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)",
+			"- Diana Sofía López                 (dialopez@unal.edu.co)",
+			"- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)",
+			"",
+			"  Wireless communications - Professor Javier L. Araque",
+			"  Master in Electronic Engineering",
+			"  UNAL - 2024-1",
+			"",
+			"  Date: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+			"",
+			"",
+			"  Description:  ${1:{File Description}}",
+			"'''",
+			"$0"
+		],
+		"description": "Add a standard header to Python files."
+	}
+}

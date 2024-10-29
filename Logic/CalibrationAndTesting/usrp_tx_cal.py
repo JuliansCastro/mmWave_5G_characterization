@@ -1,14 +1,31 @@
-import uhd
-import time
-import csv
-import numpy as np
-import scipy.io as sio
-import instrument
-import usrp
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description: script to measure power in dBm using USRP and  R&S vectorial Generator,
+               to perform a calibration of the USRP receiver.
+'''
+
+
+
 import sys
+# Route needed by python interpreter to read project's custom classes
+sys.path.append('../5G_CHARACTERIZATION/Modules')
+
+import usrp
+import instrument
+import numpy as np
 from tkinter import *
-from tkinter import ttk
-from datetime import datetime 
 from filewriter import FileCSV
 
 def continueMeasure():
@@ -17,9 +34,7 @@ def continueMeasure():
     if continue_measure == "n":
         print("Closing system...")
         sys.exit()
-    elif continue_measure == "y":
-        pass
-    else:
+    elif continue_measure != "y":
         continueMeasure()
 
 
@@ -59,14 +74,14 @@ if __name__ == "__main__":
 
     cal_file = FileCSV(tx_name, freq, tx_header) 
 
-    # FSH8 Espectrum analyzer object
-    espectrum_analyzer = instrument.RSSpectrumAnalyzer("172.177.75.23",SA_SETTINGS)
-    # Ensure FSH8 is set in espectrum analyzer mode
-    espectrum_analyzer.set_inst_mode()
+    # FSH8 Spectrum analyzer object
+    spectrum_analyzer = instrument.RSSpectrumAnalyzer("172.177.75.23",SA_SETTINGS)
+    # Ensure FSH8 is set in spectrum analyzer mode
+    spectrum_analyzer.set_inst_mode()
     # Configure instrument 
-    espectrum_analyzer.set_instrument()
+    spectrum_analyzer.set_instrument()
     # Verify configuration
-    espectrum_analyzer.print_configuration()
+    spectrum_analyzer.print_configuration()
 
     # User must be sure about settings
     continueMeasure()
@@ -75,7 +90,7 @@ if __name__ == "__main__":
     # Default settings are being used
     usrpUT = usrp.USRP(center_freq=freq)
 
-    # Pasos para la ganancia
+    # Steps to profit
     steps = 10
     gain_range = np.round(np.linspace(0, 80, steps),1)
 

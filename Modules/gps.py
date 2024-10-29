@@ -1,5 +1,25 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description:  This class is in charge of the acquisition of GPS data
+                and format raw data from UBX protocol it to the required format.
+'''
+
+
+
+import contextlib
 import threading
-import numpy as np
 from time import sleep
 from serial import Serial
 from io import BufferedReader
@@ -24,20 +44,20 @@ class GPS:
         self.ubxr = UBXReader(BufferedReader(self.serial), protfilter=UBX_PROTOCOL)
         self.msg_class = "NAV"
         self.msg_id = {"abs": "NAV-POSLLH", "rel": "NAV-RELPOSNED"}
-        # self.msg_id_1 = "NAV-RELPOSNED"     # realtive coordinates 
+        # self.msg_id_1 = "NAV-RELPOSNED"     # relative coordinates 
         # self.msg_id_2 = "NAV-POSLLH"        # abs coordinates
 
         # Choosing NAV type
         self.msg = []
-        if type in self.msg_id.keys():
+        if type in self.msg_id:
             self.msg.append(UBXMessage(self.msg_class, self.msg_id[type], GET, SET))
         elif type == "all":
-            for key in self.msg_id.keys():
-                self.msg.append(UBXMessage(self.msg_class, self.msg_id[key], GET, SET))
+            for value in self.msg_id.values():
+                self.msg.append(UBXMessage(self.msg_class, value, GET, SET))
         else:
             self.msg = None
             raise ValueError("Unrecognized acquisition type, only 'abs', 'rel' , 'all' are valid.")
-              
+
         # self.msg_2 = UBXMessage(self.msg_class, self.msg_id_2, GET, SET)
         # self.msg_1 = UBXMessage(self.msg_class, self.msg_id_1, GET, SET)
 
@@ -52,10 +72,8 @@ class GPS:
         # global parsed_data
         parsed_data = None
         if self.serial.in_waiting:
-            try:
+            with contextlib.suppress(Exception):
                 (raw_data, parsed_data) = self.ubxr.read()
-            except Exception as err:
-                pass
         return parsed_data
     
     def sendGPSMessage(self):
@@ -64,7 +82,7 @@ class GPS:
         # self.serial.write(self.msg_1.serialize())
         # self.serial.write(self.msg_2.serialize())
 
-    def recieveFromGPS(self):
+    def receiveFromGPS(self):
         gps_data = None
         while gps_data is None:
             self.sendGPSMessage()
@@ -75,10 +93,10 @@ class GPS:
     
     def continuousGPSReading(self):
         while self.continuous_reading:
-            self.recieveFromGPS()
+            self.receiveFromGPS()
     
     # Call this function each time you want to save the GPS data
-    def formatGPSData(self):
+    def format_rel_GPSData(self):
         #if self.gps_data is not None:
         #print('\n', self.gps_data, self.gps_data.relPosN, '\n')
         if hasattr(self.gps_data, 'relPosN'):

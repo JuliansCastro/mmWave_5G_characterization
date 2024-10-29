@@ -1,8 +1,31 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description:  This class is in charge of the acquisition of aiming data, 
+                it reads the serial port assigned to the Raspberry Pi Pico 
+                and parse the data to the required format.
+'''
+
+
 import threading
 from serial import Serial
 
 class RAiming:
-
+    """This class is in charge of the acquisition of aiming data,
+    it reads the serial port assigned to the raspberry-Pi Pico
+    and parse the data to the required format.
+    """    
     def __init__(self, baudrate = 19200, serial_port = "COM3"):
         self.baudrate = baudrate
         self.serial_port = serial_port
@@ -13,23 +36,22 @@ class RAiming:
 
 
     def getAiming(self):
+        """Get the values ​​of acceleration 'XZ', 'YZ' and magnetometer 'MAG'
+
+        Returns:
+            accel_mag_values {type:'list'}: ['XZ', 'YZ','MAG']
+        """        
         accel_mag_values = []
         #if self.serial.in_waiting > 0:
         self.serial.reset_input_buffer()
         # Read a line from the serial port
         str_line = self.serial.readline().decode('utf-8').strip().split(',')
 
-        # Verify that the line has three values
-        if len(str_line) == 3:
-            # Casting each value individually
-            accel_mag_values = [float(value) for value in str_line]
-
-        else:
-            #print(f"Línea con formato incorrecto: {line}")
-            accel_mag_values =[None, None, None]
-
-        
-        return accel_mag_values
+        return (
+            [float(value) for value in str_line]
+            if len(str_line) == 3
+            else [None, None, None]
+        )
 
     # WARNING: Private function used in threading. May be blocking.
     def _continuousAiming(self):

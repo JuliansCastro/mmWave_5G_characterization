@@ -1,15 +1,33 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description: test and save GPS data of relative position in a CSV file.
+'''
+
+
 import sys
 sys.path.append('../5G_CHARACTERIZATION/Modules')
 
-from time import sleep
 from gps import GPS
+from time import sleep
 from pytictoc import TicToc
 from filewriter import FileCSV
 
 
-gps_port = "COM9"
-
 try:
+    gps_port = "COM14"
+    
     gps_file = FileCSV(name="Data/Meas_GPS/GPS", frequency=None, header=["pos1","pos2", "pos3", "pos_type"], type="MEAS")
 
     timer = TicToc()
@@ -19,7 +37,7 @@ try:
     timer.tic()
     counter = 0
     while True:
-        gps_data = gps_rtk.formatGPSData()
+        gps_data = gps_rtk.format_rel_GPSData()
         gps_file.saveData(gps_data)
         print(counter, gps_data)
         counter += 1

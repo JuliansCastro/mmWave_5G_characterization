@@ -1,18 +1,26 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description: Bandwidth measure using USRP and aiming data.
+'''
+
+
 import sys
 # Route needed by python interpreter to read project's custom classes
 sys.path.append('../5G_CHARACTERIZATION/Modules')
 
-import uhd
-import csv
-import numpy as np
-import threading
-import scipy.io as sio
-from tkinter import *
-from tkinter import ttk
-from datetime import datetime 
 from time import sleep
-from io import BufferedReader
-from serial import Serial
 from usrp import USRP
 from aiming import RAiming
 from pytictoc import TicToc

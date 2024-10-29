@@ -1,7 +1,28 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description: {File Description}
+'''
+
+
+
+import contextlib
 from time import sleep
-from io import BufferedReader
-from threading import Lock
 from serial import Serial
+from threading import Lock
+from pytictoc import TicToc
+from io import BufferedReader
 from pyubx2 import ( 
     UBXMessage ,
     UBXReader ,
@@ -11,25 +32,20 @@ from pyubx2 import (
     GET,
     POLL
 )
-from pytictoc import TicToc
+
 
 t = TicToc()
 
-##########################################################################################
 
-############### Modulos GPS ###############
+############### Modules GPS ###############
 
-def read_messages( stream , lock , ubxreader) :
+def read_messages( stream , lock , ubxreader):
     global parsed_data
     if stream.in_waiting:
-        try:
+        with contextlib.suppress(Exception):
             lock.acquire()
             (raw_data , parsed_data) = ubxreader.read()
             lock.release()
-            if parsed_data:
-                pass
-        except Exception as err:
-            pass
     return parsed_data
 
 def send_message(stream, lock, message):
@@ -46,9 +62,9 @@ def receiveFromGPS(stream, lock, message, ubxreader):
     return dataFromGPS
 
 
-############### Modulos GPS ###############
+############### Modules GPS ###############
 
-port = "COM5"  # COM7 is Rx module
+port = "COM14"  # COM7 is Rx module
 baudrate = 19200
 timeout = 0.1
 
@@ -71,11 +87,10 @@ send_message(serial, serial_lock, msg)
 sleep(1)
 
 
- #################################################################
- ######################## Ciclo de lectura #######################
+ ######################## Reading cycle #######################
 
 try:
-    print("\nInicia lectura\n")
+    print("\nStart reading\n")
     dataGPS = receiveFromGPS(serial, serial_lock, msg, ubr)
     
     count_errors = 0
@@ -83,14 +98,14 @@ try:
 
     while True:
         #input("?")
-        # Lectura y muestra del GPS
+        # GPS reading and display
         t.tic()
         dataGPS = receiveFromGPS(serial, serial_lock, msg, ubr)
         #print(dataGPS,'\n')
 
         # P(114-doc-REceiver description)
-        # North, East and Down distante to relative position
-        # 'NAV-RELPOSNED' mode. Results in cm and relposHP in mm
+        # North, East and Down distance to relative position
+        # 'NAV-RELPOSNED' mode. Results in cm and relpos HP in mm
         disN = (dataGPS.relPosN #+ dataGPS.relPosHPN * 1e-2 
         )/100
         disE = (dataGPS.relPosE #+ dataGPS.relPosHPE * 1e-2
@@ -113,24 +128,9 @@ try:
 
 
 except KeyboardInterrupt:
-    print("\nCtrl + C -> Termina lectura\n")
+    print("\nCtrl + C -> Finish reading\n")
 
 finally:
-    print('eventos fuera tiempo: ', count_errors)
-    print('total eventos: ', count_loop)
-    print('Tasa', count_errors/count_loop)
-
-
-'''
-eventos fuera tiempo:  30
-total eventos:  1321
-Tasa 0.022710068130204392
-'''
-
-
-
-'''
-eventos fuera tiempo:  39
-total eventos:  18050
-Tasa 0.0021606648199445984
-'''
+    print('Events out of time: ', count_errors)
+    print('Total events: ', count_loop)
+    print('Rate: ', count_errors/count_loop)

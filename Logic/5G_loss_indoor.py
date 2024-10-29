@@ -1,3 +1,23 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description:  This script is used to measure the 5G signal loss in an indoor environment.
+                The script uses a USRP B210 and manual positioning to measure the signal loss.
+                The script saves the data in a CSV file.
+'''
+
+
 import sys
 # Route needed by python interpreter to read project's custom classes
 sys.path.append('../5G_CHARACTERIZATION/Modules')
@@ -5,10 +25,10 @@ sys.path.append('../5G_CHARACTERIZATION/Modules')
 from usrp import USRP
 from time import sleep
 from aiming import RAiming
-from pytictoc import TicToc
-from filewriter import FileCSV
-from pynput import keyboard
 from threading import Event
+from pytictoc import TicToc
+from pynput import keyboard
+from filewriter import FileCSV
 
 def oneShot():
 
@@ -40,7 +60,7 @@ def oneShot():
         chronometer = TicToc()
 
         file = FileCSV(name="Data/5G_loss/5G_loss", frequency=None, header=["PosLabel", "PowerRx","XZ","YZ", "MAG"], type="MEAS")
-        file_metadata = FileCSV(name="Data/5G_loss/Metadata/5G_loss", frequency=None, header=["time_elapsed","mumber_of_readings","reading_rate","time_per_reading","usrp_rx_thread","aiming_thread"], type="METADATA")
+        file_metadata = FileCSV(name="Data/5G_loss/Metadata/5G_loss", frequency=None, header=["time_elapsed","number_of_readings","reading_rate","time_per_reading","usrp_rx_thread","aiming_thread"], type="METADATA")
         
         usrp_UT = USRP(rx_center_freq=frequency, rx_gain=gain_rx)
         usrp_UT.startRxThread()

@@ -40,7 +40,7 @@ class USRP:
         try:
             self._usrp = uhd.usrp.MultiUSRP()
         except:
-            print('USRP no conectada')
+            print('USRP not connected')
    
     def printConfiguration(self) -> None:
         print("--------------------------------------")
@@ -72,7 +72,7 @@ class USRP:
         self._usrp.set_rx_freq(uhd.libpyuhd.types.tune_request(self.rx_center_freq), self.channel_mapping)
         self._usrp.set_rx_gain(self.rx_gain, self.channel_mapping)
 
-        self.setRecieveBuffer()
+        self.setReceiveBuffer()
 
         # # Set up the stream and receive buffer
         # st_args = uhd.usrp.StreamArgs("fc32", "sc16")
@@ -81,7 +81,7 @@ class USRP:
         # self.streamer = self._usrp.get_rx_stream(st_args)
         # self.recv_buffer = np.zeros((1, self.buffer_length), dtype=np.complex64)
         
-    def setRecieveBuffer(self):
+    def setReceiveBuffer(self):
             # Set up the stream and receive buffer
             st_args = uhd.usrp.StreamArgs("fc32", "sc16")
             st_args.channels = [self.channel_mapping]
@@ -230,7 +230,7 @@ def spectrum(usrp_test:USRP, tx = False, signal = np.ones(10)):
 
             return (ln, ann1)
         
-        print("Configura la USRP")
+        print("Configure USRP")
         #usrp_test = USRP(name = "USRP B200 mini", freq=freq, 
         #                 rx_rate=5e6, rx_samples = rx_samples, rx_gain=0, 
         #                 tx_gain=90, 
@@ -239,7 +239,7 @@ def spectrum(usrp_test:USRP, tx = False, signal = np.ones(10)):
         #                  rx_rate=5e6, rx_samples = rx_samples, rx_gain=0, 
         #                  tx_gain=0, 
         #                  calibration_file="AF_B200_mini_5_8GH")
-        print("Termina la configuraciòn")
+        print("Finish the configuration")
         
         # usrp_test.check_channels()
         # usrp_test.set_received_stream()        
@@ -267,7 +267,7 @@ if __name__ == "__main__":
         usrp_UT = USRP(rx_gain=20)
         spectrum(usrp_UT)
     except KeyboardInterrupt:
-        print("Proceso Interrumpido")
+        print("Process Interrupted")
         usrp_UT.stopRxThread()
 
 

@@ -1,25 +1,32 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description: Script to measure power in dBm using USRP step by step.
+'''
+
+
+import sys
+# Route needed by python interpreter to read project's custom classes
+sys.path.append('../5G_CHARACTERIZATION/Modules')
+
 import usrp
-import numpy as np
-import time
-from pytictoc import TicToc
-import threading
-import instrument
 
 rx_samples = []
 freq = 500e6
 gain = 22
 
 usrpUT = usrp.USRP(rx_center_freq=freq, rx_gain=gain)
-# # t = TicToc()
-# rx_thread = threading.Thread(target=usrpUT._continuousRxSampling, daemon=True)
-
-# num_frames = 20
-# discard_frames = 10
-
-# usrpUT.setReceiver()
-# #usrpUT.setRecieveBuffer()
-# usrpUT.startRxStream()
-
 
 try:
     usrpUT.startRxThread()
@@ -29,26 +36,9 @@ try:
         cont = input("Continue? ")
         if cont == "n":
             usrpUT.stopRxThread()
-        # t.tic()
-        # usrpUT.startRxStream()
-        # samples = usrpUT.getSamples()
-        # powerRx = usrpUT.getPower_dBm(samples)
-        # print("Actual measure: ", powerRx)
-        # usrpUT.stopRxStream()
-        # t.toc()
-        #time.sleep(0.01)
-        # powerRx = 0
-        # for i in range(num_frames):
-        #     usrpUT.startRxStream()
-        #     samples = usrpUT.getSamples()
-        #     usrpUT.stopRxStream()
-        #     if i >= discard_frames:                             # Discard outdated frames
-        #         powerRx += usrpUT.getPower_dBm(samples)         # |Average over 
-        # powerRx = powerRx/(num_frames-discard_frames)           # |updated frames
-        # t.toc()
-        # print("Actual measure: ", powerRx)
+        
 except KeyboardInterrupt:
-    print('\nCtrl + C -> Interrupted!')
+    print('\n\nCtrl + C -> Interrupted!')
     usrpUT.stopRxStream()
 finally:
     usrpUT.stopRxStream()

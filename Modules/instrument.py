@@ -1,7 +1,29 @@
+'''
+Develop by:
+
+- Julián Andrés Castro Pardo        (juacastropa@unal.edu.co)
+- Diana Sofía López                 (dialopez@unal.edu.co)
+- Carlos Julián Furnieles Chipagra  (cfurniles@unal.edu.co)
+- Juan Felipe González Pardo        (jugonzalezpa@unal.edu.co)
+
+  Wireless communications - Professor Javier L. Araque
+  Master in Electronic Engineering
+  UNAL - 2024-1
+
+  Date: 2024-10-29
+
+
+  Description:  This class is in charge of controlling the R&S RF generator 
+                and the spectrum analyzer.
+'''
+
+
+
+import contextlib
 import time
-from queue import LifoQueue, Full
 import numpy as np
 from RsInstrument import *
+from queue import LifoQueue, Full
 
 ''' Rohde & Schwarz instruments classes for communication and control '''
 # R&S Instrument Controller - VISA Protocol
@@ -16,13 +38,13 @@ class Instrument:
         else:
             self._instrument_ip = settings["IP"]
             self._instrument_name = settings["Name"] 
-            
+
 
         try: 
             self._instrument = RsInstrument(f"TCPIP::{self._instrument_ip}::inst0::INSTR")
             self._instrument.visa_timeout = 3000
             self._instrument_name = self._instrument.query_str('*IDN?')
-            
+
             self._connected = True
             #self._instrument = pyvisa.ResourceManager().open_resource("TCPIP::"+self._instrument_ip+"::inst0::INSTR")
             #self._instrument.timeout = 5000
@@ -30,7 +52,7 @@ class Instrument:
             #self._connected = True
         except Exception as e:
             print(e)
-            print("Failed connection with the "+self._instrument_ip+" instrument.")
+            print(f"Failed connection with the {self._instrument_ip} instrument.")
         
     @property
     def instrument(self):
@@ -161,11 +183,11 @@ class RSGenerator(Instrument):
         self._generator.write("OUTP1:STAT ON")
         self._generator.write("SOUR1:FREQ:MODE LIST")
 
-        # --------------- Comando para iniciar con la medida en la rasberry -----------------------
-        print("Simulation time: "+ str(self.simulationTime)+"s")
+        # --------------- Command to start with the measurement on the raspberry -----------------------
+        print(f"Simulation time: {str(self.simulationTime)}s")
         time.sleep(self.simulationTime)
-        # --------------- Comando para detener con la medida en la rasberry ----------------------
-        
+        # --------------- Command to stop with measurement on the raspberry ----------------------
+
         self._generator.write("SOUR1:FREQ:MODE CW")
         self._generator.write("OUTP1:STAT OFF")
         time.sleep(1)
@@ -207,12 +229,9 @@ class RSGenerator(Instrument):
                 self.power = self.new_power
             if self.new_frequency != self._frequency:
                 self.frequency = self.new_frequency*1e-6
-                
-            try:
+
+            with contextlib.suppress(Full):
                 self._q.put_nowait([self._power, self._frequency])
-            except Full:
-                pass
-        
         self.off
 
 
@@ -220,9 +239,9 @@ class RSGenerator(Instrument):
 
 #     generator = RSGenerator("172.177.75.22", power = -60, frequency = 500e6)
 
-#     print('Encendiendo...')
+#     print('Turning on...')
 #     generator.on
-#     print('Encendido :)')
+#     print('On:)')
 #     rta = input('Enter key: ')
 #     if rta is not None:
 #         generator.off
@@ -366,7 +385,7 @@ class RSSpectrumAnalyzer(Instrument):
         self._analyzer.write(f"CORRection:TRANsducer1:SELect '{TRANSDUCER['TSEMF-B3'][axis]}'")
         self._analyzer.write("CORRection:TRANsducer1 ON")
         self._analyzer.write(f"INPut:ANTenna:MEASure {axis}")
-        self._analyzer.write(f"INPut:ANTenna:STATe ON")
+        self._analyzer.write("INPut:ANTenna:STATe ON")
         self.update_scale()
         
     # Function meant to adjust the limits of the vertical axis according to the measured maxima and minima of the spectre within the specified frequency range. Calling it implies ignoring the specified values for the reference level, the display range and the video bandwidth. Required to draw the test animation of the data shown in the spectrum analyzer   
@@ -380,7 +399,7 @@ class RSSpectrumAnalyzer(Instrument):
         if ref_lvl > 20: # 20dBm is the maximum ref level for the FSH8 model
             ref_lvl = 20
         print(f"Minimum: {minimum}")
-        print(f"Maximun: {peak}")
+        print(f"Maximum: {peak}")
         self._analyzer.write_float("DISPlay:TRACe:Y ", display_range)
         self._analyzer.write_float("DISPlay:TRACe:Y:RLEV ", ref_lvl)
         self.y_range = (ref_lvl-display_range, ref_lvl)
@@ -392,7 +411,7 @@ class RSSpectrumAnalyzer(Instrument):
     
     def get_peak(self):
         peak_array=[]
-        for i in range(5):
+        for _ in range(5):
             if self.setting:
                 self._analyzer.write("CALCulate:MARKer:AOFF")
                 self._analyzer.write("CALCulate:MARKer1 ON")
@@ -403,12 +422,12 @@ class RSSpectrumAnalyzer(Instrument):
 
             peak_array.append( self._analyzer.query_float("CALCulate:MARKer1:Y?"))
             self.setting = True
-        peak=np.max(np.array(peak_array))
-        return peak
+        
+        return np.max(np.array(peak_array)) # maximum value of the array
 
     def get_min(self):
         min_array = []
-        for i in range(5):
+        for _ in range(5):
             if self.setting:
                 self._analyzer.write("CALCulate:MARKer:AOFF")
                 self._analyzer.write("CALCulate:MARKer1 ON")
@@ -418,22 +437,18 @@ class RSSpectrumAnalyzer(Instrument):
 
             min_array.append( self._analyzer.query_float("CALCulate:MARKer1:Y?"))
             self.setting = True
-        minimum = np.min(np.array(min_array))
-        return minimum
+        
+        return np.min(np.array(min_array)) # minimum value of the array
 
     def get_trace(self):
         time.sleep(.2)
-        trace = self._analyzer.query_bin_or_ascii_float_list("TRACe:DATA? TRACE1")      # The R&S FSH returns 631 values. Each value corresponds to one pixel of a trace
-        return trace
+        return self._analyzer.query_bin_or_ascii_float_list("TRACe:DATA? TRACE1")      # The R&S FSH returns 631 values. Each value corresponds to one pixel of a trace # trace
 
     def stream_thread(self):
         while self._stream:
             
-            try:
+            with contextlib.suppress(Full):
                 self._q.put_nowait(self.get_trace())
-                
-            except Full:
-                pass
         
     """
     Meas
