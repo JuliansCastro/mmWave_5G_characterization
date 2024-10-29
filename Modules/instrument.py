@@ -449,7 +449,8 @@ class RSSpectrumAnalyzer(Instrument):
             
             with contextlib.suppress(Full):
                 self._q.put_nowait(self.get_trace())
-        
+    
+    
     """
     Meas
     Modo de medición

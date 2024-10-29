@@ -18,8 +18,8 @@ Develop by:
 
 
 
-import contextlib
 import threading
+import contextlib
 from time import sleep
 from serial import Serial
 from io import BufferedReader
