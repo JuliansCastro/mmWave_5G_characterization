@@ -58,7 +58,7 @@ class USRP:
         print("Tx Gain: ", self.tx_gain)
         print("Tx Buffer Length: ", self.tx_buffer_length)
         print("--------------------------------------")
-        pass
+        
 
     '''-------------------------------------------------------------------------------------------------------------------------------
                         RECEPTION SECTION
@@ -114,11 +114,10 @@ class USRP:
     
     def getPower_dBm(self, samples):
         # Compute the received power in dBm
-        powerdBm = 10*np.log10(1e3*np.sum(np.square(np.abs(samples)))/(2*self.z0*self.rx_num_samps))
-        return powerdBm
+        return 10*np.log10(1e3*np.sum(np.square(np.abs(samples)))/(2*self.z0*self.rx_num_samps)) # power dBm
     
     def updateRxGain(self, new_gain):
-        # Used to dinamically cahnge the USRP Rx gain
+        # Used to dynamically change the USRP Rx gain
         self._usrp.set_rx_gain(new_gain, self.channel_mapping)
         self.rx_gain = new_gain
         print("New USRP gain: ", self.rx_gain)
@@ -223,8 +222,8 @@ def spectrum(usrp_test:USRP, tx = False, signal = np.ones(10)):
                     spec = 10*np.log10(spec)
                 
                 ln.set_data(frequency, spec)
-                pow = usrp_test.getPower_dBm(s)
-                ann1.set_text(f"Power from samples: {pow: .4f} dBm")
+                pow_samples = usrp_test.getPower_dBm(s)
+                ann1.set_text(f"Power from samples: {pow_samples: .4f} dBm")
             except Exception as e:
                 print(e)
 
@@ -252,7 +251,8 @@ def spectrum(usrp_test:USRP, tx = False, signal = np.ones(10)):
         #     usrp_test.set_transmitter_stream(signal= signal)
         #     tx_thread = threading.Thread(target=usrp_test.tx_thread, daemon= True)
         #     tx_thread.start()
-        anim = animation.FuncAnimation(fig=fig_, init_func=init, func=update_power, fargs = (spec,), frames = 1000, interval = 20, blit=True)
+        anim = animation.FuncAnimation(fig=fig_, init_func=init, func=update_power, fargs = (spec,),
+                                       frames = 1000, interval = 20, blit=True)
         plt.show()
         # if tx:
         #     tx_thread.join()
