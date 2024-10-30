@@ -30,7 +30,9 @@ gps_port = "COM14"
 try:
     timer = TicToc()
     gps_rtk = GPS(port=gps_port, baudrate=19200, timeout=0.1)
+    
     gps_rtk.startGPSThread()
+    
     sleep(5)
     timer.tic()
     counter = 0

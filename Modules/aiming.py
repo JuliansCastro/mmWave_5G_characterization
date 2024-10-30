@@ -22,7 +22,8 @@ import threading
 from serial import Serial
 
 class RAiming:
-    """This class is in charge of the acquisition of aiming data,
+    """
+    This class is in charge of the acquisition of aiming data,
     it reads the serial port assigned to the raspberry-Pi Pico
     and parse the data to the required format.
     
