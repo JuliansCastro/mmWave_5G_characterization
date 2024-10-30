@@ -20,8 +20,8 @@ import sys
 # Route needed by python interpreter to read project's custom classes
 sys.path.append('../5G_CHARACTERIZATION/Modules')
 
-from time import sleep
 from usrp import USRP
+from time import sleep
 from aiming import RAiming
 from pytictoc import TicToc
 from filewriter import FileCSV

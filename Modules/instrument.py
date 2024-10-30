@@ -17,8 +17,8 @@ Develop by:
                 and the R&S spectrum analyzer.
 '''
 
-import contextlib
 import time
+import contextlib
 import numpy as np
 from RsInstrument import *
 from queue import LifoQueue, Full

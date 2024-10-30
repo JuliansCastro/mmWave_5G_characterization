@@ -18,19 +18,19 @@ The project is based on the following steps:
 ## Experimental setup
 
 - Instruments
-  - USRP's B200, B200mini
-  - Transceivers (SIVERS Semiconductors) EVK 6002 (60 GHz)
-  - GPS RTK Modules (Ublox) C94-M8P
-  - Raspberry Pi Pico (RP2040)
-  - Accelerometer/Magnetometer (LSM303DLHC)
-  - Splitter 1x2 ZFSCJ-2-232-S+ (5-2300 MHz)
-  - DC-blocks $50\Omega$ BLK-89-S+ Type connector: SMA. (0 -8GHz)
+  - USRP's B200, B200mini ([Ettus](https://www.ettus.com/all-products/usrp-b200mini-i-2/))
+  - Kit Transceivers EVK 6002 (60 GHz) ([SIVERS Semiconductors](https://www.sivers-semiconductors.com/5g-millimeter-wave-mmwave-and-satcom/wireless-products/evaluation-kits/evaluation-kit-evk06002/))
+  - GPS RTK Modules C94-M8P-2 ([Ublox](https://www.u-blox.com/en/product/c94-m8p))
+  - Raspberry Pi Pico (RP2040) ([Raspberry](https://www.raspberrypi.com/products/raspberry-pi-pico/))
+  - Accelerometer/Magnetometer (LSM303DLHC) ([Adafruit](https://learn.adafruit.com/lsm303-accelerometer-slash-compass-breakout/coding))
+  - Splitter 1x2 ZFSCJ-2-232-S+ (5-2300 MHz) ([Minicircuits](https://www.minicircuits.com/WebStore/dashboard.html?model=ZFSCJ-2-232-S%2B))
+  - DC-blocks $50\Omega$ BLK-89-S+ Type connector: SMA. (0 -8GHz) ([Minicircuits](https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B))
 
 - Software (Windows OS)
-  - GNU Radio (Python 3.11)
-  - USRP UHD (Ettus Research) Version 4.6.0.0-release
-  - U-center (Ublox)
-  - SIVERS GUI for EVK 6002 (Python 3.9 based)
+  - GNU Radio for Windows (Python 3.11) ([GitHub](https://wiki.gnuradio.org/index.php/InstallingGR))
+  - USRP UHD Version: 4.6.0.0-release ([Ettus Research](https://files.ettus.com/binaries/uhd_stable/uhd_004.006.000.000-release/4.6.0.0/))
+  - U-center ([Ublox](https://www.u-blox.com/en/product/u-center))
+  - SIVERS GUI for EVK 6002 (Python 3.9 based) ([SIVERS Semiconductors](https://www.sivers-semiconductors.com/5g-millimeter-wave-mmwave-and-satcom/wireless-products/evaluation-kits/evaluation-kit-evk06002/))
 
 - Configuration and install software and modules Python
 
