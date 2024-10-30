@@ -13,17 +13,16 @@ Develop by:
   Date: 2024-10-29
 
 
-  Description:  This class is in charge of controlling the R&S RF generator 
-                and the spectrum analyzer.
+  Description:  This module is in charge of controlling the R&S RF generator 
+                and the R&S spectrum analyzer.
 '''
-
-
 
 import contextlib
 import time
 import numpy as np
 from RsInstrument import *
 from queue import LifoQueue, Full
+
 
 ''' Rohde & Schwarz instruments classes for communication and control '''
 # R&S Instrument Controller - VISA Protocol
@@ -77,6 +76,8 @@ class Instrument:
     @stream.setter
     def stream(self, start_stop):
         self._stream = start_stop
+
+
 
 ''' RF Generator '''
 class RSGenerator(Instrument):
