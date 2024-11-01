@@ -32,9 +32,38 @@ The project is based on the following steps:
   - U-center ([Ublox](https://www.u-blox.com/en/product/u-center))
   - SIVERS GUI for EVK 6002 (Python 3.9 based) ([SIVERS Semiconductors](https://www.sivers-semiconductors.com/5g-millimeter-wave-mmwave-and-satcom/wireless-products/evaluation-kits/evaluation-kit-evk06002/))
 
-- Configuration and install software and modules Python
+- #### *[Configuration and install](/Docs/Install_UHD_GNURadio.md) software and modules Python on Windows OS* [▶️](/Docs/Install_UHD_GNURadio.md)
 
-## Data acquisition
+  ### Hardware and software architecture
+
+  | ![Block wireless setup](/Docs/imgs/block_wireless_setup_outlines.svg) |
+  |:--:|
+  | *Wireless hardware setup block diagram* |
+
+  <br>
+
+  | ![UML 5G Path Loss](/Docs/imgs/uml5gLoss_outlines.svg) |
+  |:--:|
+  | *Wireless software UML diagram* |
+
+  <div style="display: flex; justify-content: space-around; align-items: center;">
+  <figure style="margin: 10px; text-align: center;">
+    <img src="./Docs/imgs/Rx_set.jpg" alt="Rover Rx" style="max-width: 180%; height: auto;">
+    <figcaption style="text-align: center;"><i>Rover Rx</i></figcaption>
+  </figure>
+  <figure style="margin: 10px; text-align: center;">
+    <img src="./Docs/imgs/Tx_set.jpg" alt="Base station Tx" style="max-width: 60%; height: auto;">
+    <figcaption><i>Base Station Tx</i></figcaption>
+  </figure>
+  </div>
+
+## Data acquisition [:top:](#5g-path-loss-characterization-at-60ghz)
+
+### Configuration of modules and sensors
+
+- Raspberry Pi Pico
+- GPS RTK Modules C94-M8P-2
+- Transceivers *Sivers EVK6002 ~60GHZ*
 
 ## Data analysis and visualization
 
