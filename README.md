@@ -49,7 +49,7 @@ The project is based on the following steps:
   <table>
   <tr>
     <td style="text-align: center;">
-      <img src="./Docs/imgs/Rx_set.jpg" alt="Rover Rx" style="max-width: 120%; height: auto;">
+      <img src="./Docs/imgs/Rx_set.jpg" alt="Rover Rx" style="max-width: 60%; height: auto;">
       <figcaption><i>Rover Rx</i></figcaption>
     </td>
     <td style="text-align: center;">
