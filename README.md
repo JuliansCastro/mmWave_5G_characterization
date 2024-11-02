@@ -50,7 +50,7 @@ The project is based on the following steps:
   <tr>
     <td style="text-align: center;">
       <img src="./Docs/imgs/Rx_set.jpg" alt="Rover Rx" width="300">
-      <div><i>Rover Rx</i></div>
+      <div style="text-align: center;"><i>Rover Rx</i></div>
     </td>
     <td style="text-align: center;">
       <img src="./Docs/imgs/Tx_set.jpg" alt="Base station Tx" width="400">
