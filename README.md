@@ -49,15 +49,14 @@ The project is based on the following steps:
   <div style="display: flex; justify-content: space-around; align-items: center;">
   <figure style="margin: 10px; text-align: center;">
     <img src="./Docs/imgs/Rx_set.jpg" alt="Rover Rx" width="300">
-    <br>
     <figcaption><i>Rover Rx</i></figcaption>
+
   </figure>
   <figure style="margin: 10px; text-align: center;">
     <img src="./Docs/imgs/Tx_set.jpg" alt="Base station Tx" width="400">
     <figcaption><i>Base Station Tx</i></figcaption>
   </figure>
-
-</div>
+  </div>
 
 ## Data acquisition [:top:](#5g-path-loss-characterization-at-60ghz)
 
