@@ -54,7 +54,7 @@ The project is based on the following steps:
     </td>
     <td style="text-align: center;">
       <img src="./Docs/imgs/Tx_set.jpg" alt="Base station Tx" width="400">
-      <div><i>Base Station Tx</i></div>
+      <div style="text-align: center;"><i>Base Station Tx</i></div>
     </td>
   </tr>
   </table>
