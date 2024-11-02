@@ -1,4 +1,4 @@
-## [⬅️](../README.md)
+## [⬅️](https://github.com/JuliansCastro/mmWave_5G_characterization)
 
 <!--
 https://tutorialmarkdown.com/emojis
