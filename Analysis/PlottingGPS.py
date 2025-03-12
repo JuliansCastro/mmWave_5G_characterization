@@ -59,7 +59,7 @@ distances = np.sqrt((latitudes - initial_point[0])**2 +
 # plt.show()
 # Graficar el recorrido en 2D
 plt.figure()
-plt.plot(disN, disE,linewidth=3)
+plt.plot(disN, disE, color='#002F5C',linewidth=3)
 plt.xlabel('North Displacement [m]',fontsize=19)
 plt.ylabel('East Displacement [m]',fontsize=19)
 plt.title('2D Trajectory',fontsize=23)

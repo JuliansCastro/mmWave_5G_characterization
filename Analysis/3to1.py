@@ -55,7 +55,9 @@ def procesar_archivo(csv_file, beamwidth_func, distanceB):
 
 # Listado de archivos CSV
 archivos_csv = [
-    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024\5G_loss_MEAS_01-08-2024-12-58-35.csv'
+    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024\5G_loss_MEAS_01-08-2024-12-58-35.csv', 
+    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024\5G_loss_MEAS_01-08-2024-13-03-11.csv',
+    r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data\5G_loss\5G_loss_MEAS_01-08-2024\5G_loss_MEAS_01-08-2024-13-10-13.csv'
 ]
 
 #CSV = r'C:\Users\sofia\OneDrive\Documentos\GitHub\5G_characterization\Data/5G_loss/5G_loss_MEAS_20-08-2024-14-23-43.csv'   #Greenhouse 4
@@ -74,7 +76,7 @@ relPos_data = []
 
 # Procesar cada archivo y almacenar los resultados  
 for i, csv_file in enumerate(archivos_csv):
-    relPos_df = procesar_archivo(csv_file, beamwidth_func,20)
+    relPos_df = procesar_archivo(csv_file, beamwidth_func,0)
     relPos_data.append((relPos_df, colores[i]))
     
 CSV_df = procesar_archivo(CSV,beamwidth_func,15)
@@ -107,11 +109,13 @@ for i, (relPos_df, color) in enumerate(relPos_data):
     print(A)
     
 
-    #plt.plot(relPos_df['Distance'], relPos_df['PowerRx'], label=f'Data {i+1}', marker='o', color=color)
-    # plt.scatter(log_distance, relPos_df['PowerRx'], label=f'Free Space', marker='o', color=color) #LogLog
-    # plt.plot(x_value, y_pred, label=f'Free Space Regression', color='b') #LogLog
+    #plt.plot(relPos_df['Distance'], relPos_df['PowerRx'], label=f'Data {i+1}', marker='o', color=color, linestyle=' ')
+    # plt.plot(x_value, y_pred, label=f'Free Space Regression', color='r',linewidth=3) #LogLog Fig8
+    # plt.plot(x_value, P, label=f'Free Space Equation', color='#800080', linewidth=3) #LogLog fig8
+    # plt.scatter(log_distance, relPos_df['PowerRx'], label=f'Free Space', marker='o', color='#00FF00') #LogLog Fig8
+    
     # plt.plot(x_value, P_1, label=f'Ecuación con pérdidas', color='g')
-    # plt.plot(x_value, P, label=f'Free Space Equation', color='r') #LogLog
+    
 def Power_Losses(x, alpha): #Function of signal Rx Power with losses
     return 10*np.log10(A/((4*np.pi*10**(x/20)/wlenght)**2))+10*np.log10(np.e**(-2*alpha*10**(x/20)))
 
@@ -120,7 +124,7 @@ def Power_Losses(x, alpha): #Function of signal Rx Power with losses
 #     return f_x
 
 def PL_InHModel(x, a, b, c):
-    f_x = a+b*np.log10(x)+20.0*np.log10((fc*1e-9))+c*(fc*1e-9)**0.248*x**0.588
+    f_x = a+b*np.log10(x)+20.0*np.log10((fc*1e-9))+c*((fc*1e-9)**0.248)*(x**0.588)*0
     return f_x
 
 PL_meas = 1-(CSV_df['PowerRx']-10*np.log10(A))
@@ -136,7 +140,7 @@ PL1 =  1-10*np.log10((np.e**(-2*alpha*CSV_df['Distance']))/(4*np.pi*CSV_df['Dist
 a, b = curve_fit(PL_InHModel, CSV_df['Distance'], PL_meas)
 print(a)
 correlation =np.corrcoef(PL_meas,PL_InHModel(CSV_df['Distance'],a[0],a[1],a[2]))[0, 1]
-correlation = round(correlation, 20)
+correlation = round(correlation, 3)
 
 
 ###
@@ -146,7 +150,7 @@ PL1_meas = 1-(CSV1_df['PowerRx']-10*np.log10(A))
 CSV1_log = 20 * np.log10(CSV1_df['Distance'])
 alpha1 , a_var1 = curve_fit(Power_Losses, CSV1_log, CSV1_df['PowerRx'].values)
 
-a1, b1 = curve_fit(PL_InHModel, CSV1_df['Distance'], PL1_meas, p0 = [0, 0, 0], bounds=([-np.inf, 0, 0], [np.inf,np.inf,np.inf]))
+a1, b1 = curve_fit(PL_InHModel, CSV1_df['Distance'], PL1_meas)
 correlation1 =np.corrcoef(PL1_meas,PL_InHModel(CSV1_df['Distance'],a1[0],a1[1],a1[2]))[0, 1]
 correlation1 = round(correlation1, 3)
 
@@ -154,21 +158,28 @@ correlation1 = round(correlation1, 3)
 #plt.scatter(CSV_log, CSV_df['PowerRx'], label=f'Invernadero', marker='o', color='m') # LogLog
 #plt.plot(x_value, Power_Losses(x_value,alpha), label=f'Ecuación invernadero', color='y') # LogLog
 # plt.plot(x_value, PL, label=f'Exponencial Model, R = {correlation1}', color='y')
-#plt.xlim(0, 40)  # Reemplaza min_x y max_x con los valores deseados
-#plt.ylim(-43,0)  # Reemplaza min_y y max_y con los valores deseados
-plt.scatter(CSV_df['Distance'], PL_meas,label=f'PL Measures', color='limegreen', s=10)
-plt.plot(x_value, PL_InHModel(x_value,a[0],a[1], a[2]), label=f'InH Modified, R = {correlation}', color='darkblue', linewidth=3) # 3GPP base model 
-# # plt.scatter(CSV1_df['Distance'], PL1_meas,label=f'PL Measures without metal structure', color='c', s=10)
-# # plt.plot(x_value, PL_InHModel(x_value,a1[0],a1[1], a1[2]), label=f'InH Modified without metal structure, R = {correlation1}', color='#FF1A1A', linewidth=3) # 3GPP base model 
-#plt.xlabel('20*log(Distance)',fontsize=19)
-#plt.ylabel('Power [dB]',fontsize=19)
-plt.xlabel('Distance [m]',fontsize=19)
-plt.ylabel('Path Loss [dB]',fontsize=19)
+plt.xlim(0, 25)  # Reemplaza min_x y max_x con los valores deseados
+plt.ylim(20, 120)  # Reemplaza min_y y max_y con los valores deseados
+
+plt.scatter(CSV_df['Distance'], PL_meas,label=f'PL Measures', color='#800080', s=10)
+plt.plot(x_value, PL_InHModel(x_value,a[0],a[1], a[2]), label=f'InH Modified, R = {correlation}', color='#FFA500', linewidth=3) # 3GPP base model 
+
+# plt.scatter(CSV_df['Distance'], PL_meas,label=f'Measures with metal structrue', color='#66CC66', s=10)
+# plt.plot(x_value, PL_InHModel(x_value,a[0],a[1], a[2]), label=f'Fitted InH with metal structrue, R = {correlation}', color='#4169E1', linewidth=3) # 3GPP base model 
+# plt.scatter(CSV1_df['Distance'], PL1_meas,label=f'Measures without metal structure', color='#FFC0CB', s=10)
+# plt.plot(x_value, PL_InHModel(x_value,a1[0],a1[1], a1[2]), label=f'Fitted InH without metal structure, R = {correlation1}', color='#DC143C', linewidth=3) # 3GPP base model 
+
+# plt.xlabel('20$\cdot$log(Distance)',fontsize=19)#Fig8
+#plt.ylabel('Power [dB]',fontsize=20) #Fig8
+plt.xlabel('Distance [m]',fontsize=20)
+plt.ylabel('Path Loss [dB]',fontsize=20)
+
+#plt.title('Power vs Distance (Free Space)',fontsize=23)
 
 plt.title('Path Loss vs Distance (Perpendicular to the furrows)',fontsize=23)
-#plt.title('Power vs 20*log(Distance)',fontsize=23)
-plt.legend(fontsize=18)  # Ajusta el tamaño de la fuente de las etiquetas de la gráfica
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
+##plt.title('Power vs 20$\cdot$log(Distance)',fontsize=23)# Fig8
+plt.legend(fontsize=20, loc="lower right")  # Ajusta el tamaño de la fuente de las etiquetas de la gráfica
+plt.xticks(fontsize=20)
+plt.yticks(fontsize=20)
 plt.grid(True)
 plt.show()
