@@ -54,3 +54,11 @@ rsconnect/
 
 # 
 **/__pycache__/
+
+# do,'t load images
+*.png
+*.jpg
+*.jpeg
+*.eps
+*.svg
+*.pdf
