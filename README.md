@@ -64,7 +64,9 @@ The project is based on the following steps:
 
 ### Configuration of modules and sensors
 
-- Raspberry Pi Pico [▶️](/Docs/Install_RaspberryPiPico_LSM303.md)
+- Raspberry Pi Pico with:
+  - LSM303[▶️](/Docs/Install_RaspberryPiPico_LSM303.md)
+  - CMPS12[▶️](/Docs/Install_RaspberryPiPico_CMPS12.md)
 - GPS RTK Modules (C94-M8P-2 Ublox)
 - Transceivers *Sivers EVK6002 ~60GHZ*
 
@@ -78,4 +80,4 @@ The project is based on the following steps:
 ---
 ## References
 
-[1] C. J. Furnieles, J. A. Castro, D. S. López, J. E. Arévalo and J. L. Araque, "Path Loss Measurements in the 60 GHz Frequency Band in a Greenhouse," 2024 IEEE 1st Latin American Conference on Antennas and Propagation (LACAP), Cartagena de Indias, Colombia, 2024, pp. 1-2, doi: [10.1109/LACAP63752.2024.10876224](https://doi.org/10.1109/LACAP63752.2024.10876224 "target=blank").
+[1] C. J. Furnieles, J. A. Castro, D. S. López, J. E. Arévalo and J. L. Araque, "Path Loss Measurements in the 60 GHz Frequency Band in a Greenhouse," 2024 IEEE 1st Latin American Conference on Antennas and Propagation (LACAP), Cartagena de Indias, Colombia, 2024, pp. 1-2, doi: <a href="https://doi.org/10.1109/LACAP63752.2024.10876224" target="_blank">10.1109/LACAP63752.2024.10876224</a>.

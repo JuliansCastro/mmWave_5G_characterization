@@ -59,7 +59,7 @@ def oneShot():
     try:
         chronometer = TicToc()
 
-        file = FileCSV(name="Data/5G_loss/5G_loss", frequency=None, header=["PosLabel", "PowerRx","XZ","YZ", "MAG"], type="MEAS")
+        file = FileCSV(name="Data/5G_loss/5G_loss", frequency=None, header=["PosLabel", "PowerRx","Roll_XZ","Pitch_YZ", "Bearing_MAG"], type="MEAS")
         file_metadata = FileCSV(name="Data/5G_loss/Metadata/5G_loss", frequency=None, header=["time_elapsed","number_of_readings","reading_rate","time_per_reading","usrp_rx_thread","aiming_thread"], type="METADATA")
         
         usrp_UT = USRP(rx_center_freq=frequency, rx_gain=gain_rx)

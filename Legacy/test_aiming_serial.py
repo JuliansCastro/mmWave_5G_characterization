@@ -30,7 +30,7 @@ import aiming
 t = pytictoc.TicToc()
 
 #this will store the aiming
-aim = aiming.RAiming(baudrate=19200,serial_port="COM13")
+aim = aiming.RAiming(baudrate=19200,serial_port="COM3")
 
 #this will store the line
 line = []

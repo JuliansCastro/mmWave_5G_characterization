@@ -69,7 +69,8 @@ def oneShotAim():
     t = TicToc()
 
     # bw_file = FileCSV(name="Measures\\BWMeasure\\USRP01", frequency=None, header=["XZ","YZ", "MAG", "PowerRx"], type="BW_MEAS")
-    bw_file = FileCSV(name="Data/BeamWidth/USRP01_BW", frequency=None, header=["XZ","YZ", "MAG", "PowerRx"], type="MEAS")
+    bw_file = FileCSV(name="Data/BeamWidth/USRP01_BW", frequency=None,
+                      header=["Roll_XZ", "Pitch_YZ", "Bearing_MAG", "PowerRx"], type="MEAS")
 
     try:
         usrp_UT.startRxThread()

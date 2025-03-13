@@ -71,7 +71,7 @@ class RAiming:
         self.serial.reset_input_buffer()
         # Read a line from the serial port
         str_line = self.serial.readline().decode('utf-8').strip().split(',')
-
+        
         return (
             [float(value) for value in str_line]
             if len(str_line) == 3
