@@ -78,4 +78,4 @@ The project is based on the following steps:
 ---
 ## References
 
-[1] C. J. Furnieles, J. A. Castro, D. S. López, J. E. Arévalo and J. L. Araque, "Path Loss Measurements in the 60 GHz Frequency Band in a Greenhouse," 2024 IEEE 1st Latin American Conference on Antennas and Propagation (LACAP), Cartagena de Indias, Colombia, 2024, pp. 1-2, doi: [10.1109/LACAP63752.2024.10876224](https://doi.org/10.1109/LACAP63752.2024.10876224?target=_blank).
+[1] C. J. Furnieles, J. A. Castro, D. S. López, J. E. Arévalo and J. L. Araque, "Path Loss Measurements in the 60 GHz Frequency Band in a Greenhouse," 2024 IEEE 1st Latin American Conference on Antennas and Propagation (LACAP), Cartagena de Indias, Colombia, 2024, pp. 1-2, doi: [10.1109/LACAP63752.2024.10876224](https://doi.org/10.1109/LACAP63752.2024.10876224 "target=_blank").
