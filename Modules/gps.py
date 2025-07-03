@@ -79,7 +79,8 @@ class GPS:
         self.serial = Serial(port=self.port, baudrate=self.baudrate, timeout=self.timeout)
         self.ubxr = UBXReader(BufferedReader(self.serial), protfilter=UBX_PROTOCOL)
         self.msg_class = "NAV"
-        self.msg_id = {"abs": "NAV-POSLLH", "rel": "NAV-RELPOSNED"}
+        self.msg_id = {"abs": "NAV-HPPOSLLH", "rel": "NAV-RELPOSNED"}
+        #self.msg_id = {"abs": "NAV-POSLLH", "rel": "NAV-RELPOSNED"}
         # self.msg_id_1 = "NAV-RELPOSNED"     # relative coordinates 
         # self.msg_id_2 = "NAV-POSLLH"        # abs coordinates
         
@@ -183,7 +184,7 @@ class GPS:
         '''
         
         #if self.gps_data is not None:
-        #print('\n', self.gps_data, self.gps_data.relPosN, '\n')
+        print('\n', self.gps_data, '\n')
         if hasattr(self.gps_data, 'relPosN'):
             distance_N = (self.gps_data.relPosN)/100
             distance_E = (self.gps_data.relPosE)/100
@@ -209,7 +210,7 @@ class GPS:
 
         '''
         try:
-            #print(self.gps_data)
+            print(self.gps_data)
             abs_coordinates = [self.gps_data.lon, self.gps_data.lat, self.gps_data.height]
         except AttributeError:
             abs_coordinates = [0,0,0]

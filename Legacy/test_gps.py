@@ -16,20 +16,24 @@ Develop by:
 '''
 
 
-import sys
 # Route needed by python interpreter to read project's custom classes
-sys.path.append('../5G_CHARACTERIZATION/Modules')
+# Add the path to the 'Modules' directory to the PYTHONPATH
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'Modules')))
 
+#from gps import GPS
 from gps import GPS
 from time import sleep
 from pytictoc import TicToc
 
 
-gps_port = "COM14"
+gps_port = "COM4"
 
 try:
     timer = TicToc()
-    gps_rtk = GPS(port=gps_port, baudrate=19200, timeout=0.1)
+    gps_rtk = GPS(port=gps_port, baudrate=19200, timeout=0.1, type='rel')
     
     gps_rtk.startGPSThread()
     
@@ -38,6 +42,7 @@ try:
     counter = 0
     while True:
         print(counter, gps_rtk.format_rel_GPSData())
+        #print(counter, gps_rtk.format_abs_GPSData())
         counter += 1
         #timer.toc()
         if timer.tocvalue() >= 60.0:
