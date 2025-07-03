@@ -1,6 +1,6 @@
 # 5G path loss characterization at 60GHz
 
-5G path loss characterization using SIVERS Semiconductors EVK 6002 transceivers (60 GHz) and USRP B200 and B200mini for outdoor environments. Realized in the context of the course "Wireless Communications" at the Universidad Nacional de Colombia (UNAL) - Bogotá DC. Data are taken in the greenhouses of the university campus.
+5G path loss characterization based on data analytics and statistical machine learning using SIVERS Semiconductors EVK 6002 (60 GHz) and USRP B200 and B200mini outdoor transceivers. "Wireless Communications" project conducted at the National University of Colombia (UNAL) in Bogotá, DC. Data were collected in greenhouses on the university campus.
 
 Develop by:
 
