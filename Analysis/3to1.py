@@ -111,7 +111,7 @@ for i, (relPos_df, color) in enumerate(relPos_data):
 
     #plt.plot(relPos_df['Distance'], relPos_df['PowerRx'], label=f'Data {i+1}', marker='o', color=color, linestyle=' ')
     # plt.plot(x_value, y_pred, label=f'Free Space Regression', color='r',linewidth=3) #LogLog Fig8
-    # plt.plot(x_value, P, label=f'Free Space Equation', color='#800080', linewidth=3) #LogLog fig8
+    plt.plot(x_value, P, label=f'Free Space Equation', color='#800080', linewidth=3) #LogLog fig8
     # plt.scatter(log_distance, relPos_df['PowerRx'], label=f'Free Space', marker='o', color='#00FF00') #LogLog Fig8
     
     # plt.plot(x_value, P_1, label=f'Ecuación con pérdidas', color='g')
@@ -161,8 +161,8 @@ correlation1 = round(correlation1, 3)
 plt.xlim(0, 25)  # Reemplaza min_x y max_x con los valores deseados
 plt.ylim(20, 120)  # Reemplaza min_y y max_y con los valores deseados
 
-plt.scatter(CSV_df['Distance'], PL_meas,label=f'PL Measures', color='#800080', s=10)
-plt.plot(x_value, PL_InHModel(x_value,a[0],a[1], a[2]), label=f'InH Modified, R = {correlation}', color='#FFA500', linewidth=3) # 3GPP base model 
+#plt.scatter(CSV_df['Distance'], PL_meas,label=f'PL Measures', color='#800080', s=10)
+#plt.plot(x_value, PL_InHModel(x_value,a[0],a[1], a[2]), label=f'InH Modified, R = {correlation}', color='#FFA500', linewidth=3) # 3GPP base model 
 
 # plt.scatter(CSV_df['Distance'], PL_meas,label=f'Measures with metal structrue', color='#66CC66', s=10)
 # plt.plot(x_value, PL_InHModel(x_value,a[0],a[1], a[2]), label=f'Fitted InH with metal structrue, R = {correlation}', color='#4169E1', linewidth=3) # 3GPP base model 
