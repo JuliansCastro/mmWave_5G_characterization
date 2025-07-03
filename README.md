@@ -250,6 +250,7 @@ def correct_PowerRx(row, beamwidth_func):
 - **Model Comparisons**: Measured vs. theoretical predictions
 - **Statistical Distributions**: Error analysis and model fitting quality
 
+<!--
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
 
   <div style="text-align: center;">
@@ -271,8 +272,7 @@ def correct_PowerRx(row, beamwidth_func):
     <p><strong>Path Loss Curves:</strong> Distance vs. power relationships</p>
     <img src="docs/imgs/pathloss_power.png" alt="Path Loss Curves" style="width: 100%; height: auto; object-fit: cover;" />
   </div>
-
-  <!-- Model Comparisons -->
+  
   <div style="text-align: center;">
     <img src="docs/imgs/comparisons.jpg" alt="Model Comparisons" style="width: 100%; height: auto; object-fit: cover;" />
     <p><strong>Model Comparisons</strong><br>Measured vs. theoretical predictions</p>
@@ -284,7 +284,7 @@ def correct_PowerRx(row, beamwidth_func):
   </div>
 
 </div>
-
+-->
 
 **Output Formats:**
 
