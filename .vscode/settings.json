@@ -60,5 +60,19 @@
         "xytext",
         "ylabel",
         "ylim"
-    ]
+    ],
+    "mcp": {
+        "servers": {
+            "pdf-reader": {
+                "type": "stdio",
+                "command": "docker",
+                "args": [
+                    "run",
+                    "--rm", 
+                    "-i",
+                    "pdf-reader-mcp"
+                ]
+            }
+        }
+    }
 }

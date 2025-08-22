@@ -75,6 +75,7 @@ class SerialPortSelectorGUI(QWidget):
         self.scanner.scan_ports()
         ports = self.scanner.get_ports()
         for p in ports:
+            print(p)
             label = f"{p['device']} - {p['description']} (VID:{p['vid']} PID:{p['pid']})"
             self.combo_box.addItem(label, p)
 

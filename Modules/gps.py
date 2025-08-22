@@ -16,23 +16,25 @@ Develop by:
                 and format raw data from UBX protocol it to the required format.
 '''
 
-
-
 import threading
 import contextlib
+import numpy as np
 from time import sleep
 from serial import Serial
+from datums import DATUMS
+from pytictoc import TicToc
 from io import BufferedReader
-from pyubx2 import ( 
-    UBXMessage ,
-    UBXReader ,
+from pyubx2 import (
+    UBXMessage,
+    UBXReader,
     UBX_MSGIDS,
     UBX_PROTOCOL,
     SET,
     GET,
-    POLL
+    POLL,
+    ERR_IGNORE,
+    haversine,
 )
-from pytictoc import TicToc
 
 class GPS:
     '''
@@ -75,22 +77,22 @@ class GPS:
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
-        
+
         self.serial = Serial(port=self.port, baudrate=self.baudrate, timeout=self.timeout)
-        self.ubxr = UBXReader(BufferedReader(self.serial), protfilter=UBX_PROTOCOL)
+        self.ubxr = UBXReader(BufferedReader(self.serial), protfilter=UBX_PROTOCOL, quitonerror=ERR_IGNORE)
         self.msg_class = "NAV"
         self.msg_id = {"abs": "NAV-HPPOSLLH", "rel": "NAV-RELPOSNED"}
         #self.msg_id = {"abs": "NAV-POSLLH", "rel": "NAV-RELPOSNED"}
-        # self.msg_id_1 = "NAV-RELPOSNED"     # relative coordinates 
-        # self.msg_id_2 = "NAV-POSLLH"        # abs coordinates
-        
+
         # Choosing NAV type
         self.msg = []
         if type in self.msg_id:
-            self.msg.append(UBXMessage(self.msg_class, self.msg_id[type], GET, SET))
+            self.msg.append(UBXMessage(self.msg_class, self.msg_id[type], GET))
         elif type == "all":
-            for value in self.msg_id.values():
-                self.msg.append(UBXMessage(self.msg_class, value, GET, SET))
+            self.msg.extend(
+                UBXMessage(self.msg_class, value, GET)
+                for value in self.msg_id.values()
+            )
         else:
             self.msg = None
             raise ValueError("Unrecognized acquisition type, only 'abs', 'rel' , 'all' are valid.")
@@ -170,7 +172,7 @@ class GPS:
             self.receiveFromGPS()
     
     # Call this function each time you want to save the GPS data
-    def format_rel_GPSData(self):
+    def format_GPSData(self):
         '''
         Formats and returns the relative or absolute GPS data.
 
@@ -180,43 +182,59 @@ class GPS:
 
         Returns:
             list:   A list containing the formatted GPS coordinates and their type ('relPos').
-                    Here, the coordinates are in the order [North, East, Down, 'relPos'] in meters (cm/100).
+                    Here, the coordinates are in the order [North, East, Down, accN, accE, accD, 'relPos'] in meters (cm/100).
+                    Here, the coordinates are in the order [lon, lat, height, hAcc, vAcc, 'absPos'] in millimeters (mm/1000).
         '''
         
         #if self.gps_data is not None:
-        print('\n', self.gps_data, '\n')
+        # print('\n', self.gps_data, '\n')
         if hasattr(self.gps_data, 'relPosN'):
-            distance_N = (self.gps_data.relPosN)/100
-            distance_E = (self.gps_data.relPosE)/100
-            distance_D = (self.gps_data.relPosD)/100
-            coordinates = [distance_N, distance_E, distance_D, 'relPos']
-        if hasattr(self.gps_data, 'lon'):
-            coordinates = [self.gps_data.lon, self.gps_data.lat, self.gps_data.height, 'absPos']
-        
-        #coordinates = np.append(relative_coordinates, abs_coordinates)
+            # print(self.gps_data) # Caution: Print generates an error.
+            coordinates = [self.gps_data.relPosN,   # cm
+                           self.gps_data.relPosE,   # cm
+                           self.gps_data.relPosD,   # cm
+                           self.gps_data.accN,  # mm
+                           self.gps_data.accE,  # mm
+                           self.gps_data.accD,  # mm
+                           'relPos']
+        elif hasattr(self.gps_data, 'lon'):
+            # print(self.gps_data) # Caution: Print generates an error.
+            coordinates = [self.gps_data.lon,
+                           self.gps_data.lat,
+                           self.gps_data.height,
+                           self.gps_data.hMSL, # mm
+                           self.gps_data.hAcc, # mm
+                           self.gps_data.vAcc, # mm
+                           'absPos']
         return coordinates
     
-    def format_abs_GPSData(self):
-        '''
-        Formats and returns the absolute GPS data.
-
-        This function retrieves the longitude, latitude, and height from the GPS data
-        and formats them into a list. If the GPS data is not available, it  returns a 
-        default list of zeros.
-
-        Returns:
-            list:   A list containing the absolute GPS coordinates [longitude, latitude, height].
-                    Lon and lat are in degrees and Height above ellipsoid in mm.
-
-        '''
-        try:
-            print(self.gps_data)
-            abs_coordinates = [self.gps_data.lon, self.gps_data.lat, self.gps_data.height]
-        except AttributeError:
-            abs_coordinates = [0,0,0]
-        return abs_coordinates
+    def haversine_dist(self, lat1, lon1, lat2, lon2):
+        """
+        Calculate the distance between two geographic points using the Haversine formula.
+        Using default WGS84 datum.
         
-    
+        Args:
+            lat1, lon1: Latitude and longitude of the first point (in degrees)
+            lat2, lon2: Latitude and longitude of the second point (in degrees)
+        
+        Returns:
+            float: Distance in meters
+
+        http://www.movable-type.co.uk/scripts/latlong.html
+        
+        """
+        # Refer to DATUMS.py in the /examples folder for list of common
+        # international datums with semi-major axis, flattening and
+        # delta_x,y,z reference values
+        
+        # DATUM = 'Bogota_Observatory'
+        # datum_dict = DATUMS[DATUM]
+        # ellipsoid, a, f, delta_x, delta_y, delta_z = datum_dict.values()
+        # return haversine(lat1, lon1, lat2, lon2, radius=a) # return esferical distance in km
+        
+        # return esferical distance in km using default WGS84 datum
+        return haversine(lat1, lon1, lat2, lon2)
+
     def startGPSThread(self):
         '''
         Starts a thread for continuous GPS reading.
