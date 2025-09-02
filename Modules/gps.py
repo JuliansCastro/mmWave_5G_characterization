@@ -12,8 +12,9 @@ Develop by:
   Date: 2024-10-29
 
 
-  Description:  This class is in charge of the acquisition of GPS data
-                and format raw data from UBX protocol it to the required format.
+  Description:  This class is in charge of the acquisition of GPS- RTK (u-blox C94-M8P 2) data
+                and format raw data from UBX protocol it to the required format
+                for Rover position.
 '''
 
 import threading

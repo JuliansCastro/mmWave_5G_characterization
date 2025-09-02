@@ -42,8 +42,8 @@ try:
     timer.tic()
     
 
-   start_position_abs = [-74.08198720, 4.639767] #, 0, 2585.419]
-    start_position_rel = [0,0]
+    start_position_abs = [-74.08198720, 4.639767, 2585.419]  # [lon, lat, alt]
+    start_position_rel = [0,0,0]
     counter = 0
     
     while True:

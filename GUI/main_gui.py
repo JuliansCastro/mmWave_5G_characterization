@@ -1,5 +1,23 @@
-# serial_scanner.py
+# main_app.py
+
+import sys
+import PyQt6
+import numpy as np
+import pyqtgraph as pg
 import serial.tools.list_ports
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
+    QMainWindow,  QTabWidget, QApplication, 
+    QWidget, QVBoxLayout, QPushButton, 
+    QComboBox, QLabel, QMessageBox, QGridLayout
+)
+
+# gui_selector.py
+# serial_scanner.py
+# from serial_scanner import SerialPortScanner
+# from real_time_plot import RealTimePlotWidget
+#from gui_selector import SerialPortSelectorGUI
+# real_time_plot.py
 
 class SerialPortScanner:
     def __init__(self):
@@ -26,20 +44,7 @@ class SerialPortScanner:
     def get_ports(self):
         return self.available_ports
     
-# if __name__ == "__main__":
 
-#     scanner = SerialPortScanner()
-#     scanner.scan_ports()
-#     print(scanner.get_ports())
-
-# gui_selector.py
-from PyQt6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton,
-    QComboBox, QLabel, QMessageBox
-)
-from PyQt6.QtCore import Qt
-# from serial_scanner import SerialPortScanner
-import sys
 
 class SerialPortSelectorGUI(QWidget):
     def __init__(self):
@@ -75,7 +80,7 @@ class SerialPortSelectorGUI(QWidget):
         self.scanner.scan_ports()
         ports = self.scanner.get_ports()
         for p in ports:
-            print(p)
+            # print(p)
             label = f"{p['device']} - {p['description']} (VID:{p['vid']} PID:{p['pid']})"
             self.combo_box.addItem(label, p)
 
@@ -88,18 +93,6 @@ class SerialPortSelectorGUI(QWidget):
             self.status_label.setText(f"Puerto activo: {port_info['device']}")
         else:
             QMessageBox.warning(self, "Error", "No se ha seleccionado ningún puerto.")
-
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     window = SerialPortSelectorGUI()
-#     window.show()
-#     sys.exit(app.exec())
-
-# yaw_compass.py
-import PyQt6
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
-import pyqtgraph as pg
-import numpy as np
 
 class YawCompassWidget(QWidget):
     def __init__(self, title="Yaw"):
@@ -141,10 +134,6 @@ class YawCompassWidget(QWidget):
         y = [0, 80 * np.sin(angle_rad)]
         self.arrow.setData(x, y)
 
-# inclinometer.py
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
-import pyqtgraph as pg
-import numpy as np
 
 class InclinometerWidget(QWidget):
     def __init__(self, title="Inclinómetro"):
@@ -178,14 +167,6 @@ class InclinometerWidget(QWidget):
         self.bar.setData(x, y)
         self.angle_text.setText(f"{angle_deg:.1f}°")
 
-from PyQt6.QtWidgets import QMainWindow, QApplication, QTabWidget, QWidget, QVBoxLayout
-#from gui_selector import SerialPortSelectorGUI
-import sys
-
-# real_time_plot.py
-from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel
-import pyqtgraph as pg
-import numpy as np
 
 class RealTimePlotWidget(QWidget):
     def __init__(self):
@@ -275,8 +256,7 @@ class RealTimePlotWidget(QWidget):
 
 #         # Puedes agregar más tabs aquí (visualización, adquisición, configuración...)
 
-# main_app.py (continuación)
-# from real_time_plot import RealTimePlotWidget
+
 
 class MainApp(QMainWindow):
     def __init__(self):
@@ -333,11 +313,19 @@ class MainApp(QMainWindow):
         self.plot_tab.update_roll(roll)
 
 
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     window = SerialPortSelectorGUI()
+#     window.show()
+#     sys.exit(app.exec())
+
+# if __name__ == "__main__":
+#     scanner = SerialPortScanner()
+#     scanner.scan_ports()
+#     print(scanner.get_ports())
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = MainApp()
     main_window.show()
     sys.exit(app.exec())
-
-# Quitar dependencias duplicadas

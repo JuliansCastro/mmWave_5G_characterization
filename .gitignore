@@ -55,6 +55,9 @@ rsconnect/
 # 
 **/__pycache__/
 
+# build
+build/
+
 # do,'t load images
 *.png
 *.jpg
