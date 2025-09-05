@@ -34,6 +34,8 @@ The project is based on the following steps:
 
 - #### *[Configuration and install](/Docs/Install_UHD_GNURadio.md) software and modules Python on Windows OS* [▶️](/Docs/Install_UHD_GNURadio.md)
 
+- #### *[Procedure](/Docs/Procedure%20for%20taking%20measurements.md) for taking measurements* [▶️](/Docs/Procedure%20for%20taking%20measurements.md)
+
   ### Hardware and software architecture
 
   | ![Block wireless setup](/Docs/imgs/block_wireless_setup_outlines.svg) |

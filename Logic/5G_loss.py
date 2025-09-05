@@ -17,14 +17,17 @@ Develop by:
                 to measure 5G signal loss in a specific area. Capacity to continue measurement.
 '''
 
-
-import sys
 # Route needed by python interpreter to read project's custom classes
-sys.path.append('../5G_CHARACTERIZATION/Modules')
+# Add the path to the 'Modules' directory to the PYTHONPATH
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'Modules')))
 
 from gps import GPS
 from usrp import USRP
 from time import sleep
+from datetime import datetime
 from aiming import RAiming
 from pytictoc import TicToc
 from filewriter import FileCSV
@@ -55,17 +58,18 @@ def oneShot():
 
     try:
         # Serial ports
-        aim_port = "COM13"
-        gps_port = "COM14"
+        aim_port = "COM8"
+        gps_port = "COM9"
 
         chronometer = TicToc()
 
         file = FileCSV(name="Data/5G_loss/5G_loss",
                        frequency=None, 
-                       header=["R_N/Lon","R_E/Lat","R_D/Hgt",
+                       header=["Timestamp",
+                               "R_N/Lon", "R_E/Lat", "R_D/Hgt",
                                "accN/hMSL", "accE/hAcc", "accD/vAcc",
                                "PosType", "PowerRx",
-                               "Roll_XZ", "Pitch_YZ", "Bearing_MAG"],
+                               "Bearing", "Roll_XZ", "Pitch_YZ", "cal_stat_aim", "Temp"],
                        type="MEAS")
         file_metadata = FileCSV(name="Data/5G_loss/Metadata/5G_loss", frequency=None, header=["time_elapsed","number_of_readings",
                                                                                               "reading_rate","time_per_reading",
@@ -87,8 +91,11 @@ def oneShot():
             powerRx = usrp_UT.getPower_dBm(usrp_UT.rx_samples)
             gps_data = gps_rtk.format_GPSData()
             aiming = aiming_UT.getAiming()
-            loss_data = [gps_data[0],gps_data[1],gps_data[2],gps_data[3],powerRx,
-                        aiming[0],aiming[1],aiming[2]]
+            date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+            loss_data = [date_time, gps_data[0], gps_data[1], gps_data[2], gps_data[3], gps_data[4], gps_data[5], gps_data[6],
+                         powerRx,
+                         aiming[0], aiming[1], aiming[2], aiming[3], aiming[4]
+                         ]
 
             print("\t", counter, loss_data)
             file.saveData(loss_data)

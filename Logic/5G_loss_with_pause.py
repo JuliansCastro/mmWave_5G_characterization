@@ -18,13 +18,18 @@ Develop by:
 '''
 
 
-import sys
 # Route needed by python interpreter to read project's custom classes
-sys.path.append('../5G_CHARACTERIZATION/Modules')
+# Add the path to the 'Modules' directory to the PYTHONPATH
+import os
+import sys
+import numpy as np
+sys.path.append(os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'Modules')))
 
 from gps import GPS
 from usrp import USRP
 from time import sleep
+from datetime import datetime
 from aiming import RAiming
 from pynput import keyboard
 from pytictoc import TicToc
@@ -42,8 +47,8 @@ def oneShot():
             measuring_flag.clear()
 
     # Serial ports
-    aim_port = "COM13"
-    gps_port = "COM14" 
+    aim_port = "COM8"
+    gps_port = "COM9" 
 
     # Baudrates
     aim_baudrate = 19200
@@ -64,18 +69,28 @@ def oneShot():
 
         file = FileCSV(name="Data/5G_loss/5G_loss", 
                        frequency=None, 
-                       header=["R_N/Lon", "R_E/Lat", "R_D/Hgt",
+                       header=["Timestamp",
+                               "R_N/Lon", "R_E/Lat", "R_D/Hgt",
                                "accN/hMSL", "accE/hAcc", "accD/vAcc",
                                "PosType", "PowerRx",
-                               "Roll_XZ", "Pitch_YZ", "Bearing_MAG"],
+                               "Bearing", "Roll_XZ", "Pitch_YZ", "cal_stat_aim", "Temp"],
                        type="MEAS")
-        file_metadata = FileCSV(name="Data/5G_loss/Metadata/5G_loss", frequency=None, header=["time_elapsed","mumber_of_readings","reading_rate","time_per_reading","usrp_rx_thread","aiming_thread","gps_thread"], type="METADATA")
+        file_metadata = FileCSV(name="Data/5G_loss/Metadata/5G_loss",
+                                frequency=None,
+                                header=["time_elapsed",
+                                        "mumber_of_readings",
+                                        "reading_rate",
+                                        "time_per_reading",
+                                        "usrp_rx_thread",
+                                        "aiming_thread",
+                                        "gps_thread"], 
+                                type="METADATA")
         
         usrp_UT = USRP(rx_center_freq=frequency, rx_gain=gain_rx)
         usrp_UT.startRxThread()
         aiming_UT = RAiming(serial_port=aim_port, baudrate=aim_baudrate)
         #aiming_UT.startAimingThread()
-        gps_rtk = GPS(port=gps_port, baudrate=gps_baudrate, timeout=0.1, type="rel")
+        gps_rtk = GPS(port=gps_port, baudrate=gps_baudrate, timeout=0.1, type="all")
         gps_rtk.startGPSThread()
 
         # Objects needed for keyboard measurement control
@@ -95,9 +110,12 @@ def oneShot():
                 powerRx = usrp_UT.getPower_dBm(usrp_UT.rx_samples)
                 gps_data = gps_rtk.format_GPSData()
                 aiming = aiming_UT.getAiming()
-                loss_data = [gps_data[0],gps_data[1],gps_data[2],gps_data[3],powerRx,
-                            aiming[0],aiming[1],aiming[2]]
-                
+                date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+                loss_data = [date_time,gps_data[0],gps_data[1],gps_data[2],gps_data[3],gps_data[4],gps_data[5],gps_data[6],
+                             powerRx,
+                             aiming[0],aiming[1],aiming[2],aiming[3],aiming[4]
+                            ]
+
                 print("\t", counter, loss_data)
                 file.saveData(loss_data)
                 counter += 1
@@ -123,8 +141,8 @@ def oneShot():
 
 
     finally:
-        # time_elapsed = chronometer.tocvalue()
-        reading_rate = counter/time_elapsed# chronometer.tocvalue()
+        time_elapsed = chronometer.tocvalue()
+        reading_rate = counter/time_elapsed
 
         print("\n\nResults:")
         print("\tTime elapsed: ", time_elapsed)

@@ -9,6 +9,9 @@ https://tutorialmarkdown.com/emojis
 This file provides instructions for installing the UHD (USRP Hardware Driver) and GNURadio software on a Windows x64 system. It includes links to the necessary drivers and packages from Ettus Research, as well as steps for setting up the environment variables required for the installation. This document is intended to guide users through the process of configuring their system to work with UHD and GNURadio on a Windows OS.
 
 ## For Windows x64
+SIVERSIMA:
+
+Install the drivers for the SIVERS Semiconductors EVK02001 and EVK06002/3. The instructions and source files are provided by the manufacturer (SIVERS Semiconductors) upon the purchase of these modules. After installation, append the locations of these drivers (the folder paths ending with "cruijff_a" and "Eder_B") to your PYTHONPATH environment variable. Otherwise, you will not be able to import the driver libraries in Python.
 
 Links UHD-USRP:
 

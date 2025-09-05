@@ -61,20 +61,20 @@ class RAiming:
 
     def getAiming(self):
         """
-        Get the values ​​of acceleration 'XZ', 'YZ' and magnetometer 'MAG'
+        Get the values ​​of acceleration 'bearing', 'pitch' and magnetometer 'roll'
 
         Returns:
-            accel_mag_values (list): ['XZ', 'YZ','MAG']
+            accel_mag_values (list): ['bearing', 'pitch','roll']
         """        
         accel_mag_values = []
         #if self.serial.in_waiting > 0:
         self.serial.reset_input_buffer()
         # Read a line from the serial port
         str_line = self.serial.readline().decode('utf-8').strip().split(',')
-        
+        #print(str_line)
         return (
             [float(value) for value in str_line]
-            if len(str_line) == 3
+            if len(str_line) == 5
             else [None, None, None]
         )
 

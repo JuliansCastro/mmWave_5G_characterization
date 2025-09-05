@@ -16,10 +16,13 @@ Develop by:
                Data is read from a serial port, from Raspberry Pi Pico.
 '''
 
-
-import sys
 # Route needed by python interpreter to read project's custom classes
-sys.path.append('../5G_CHARACTERIZATION/Modules')
+# Add the path to the 'Modules' directory to the PYTHONPATH
+import os
+import sys
+import numpy as np
+sys.path.append(os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'Modules')))
 
 import time
 import pytictoc
@@ -30,7 +33,7 @@ import aiming
 t = pytictoc.TicToc()
 
 #this will store the aiming
-aim = aiming.RAiming(baudrate=19200,serial_port="COM3")
+aim = aiming.RAiming(baudrate=19200,serial_port="COM8")
 
 #this will store the line
 line = []
