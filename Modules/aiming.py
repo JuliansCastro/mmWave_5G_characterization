@@ -72,6 +72,8 @@ class RAiming:
         # Read a line from the serial port
         str_line = self.serial.readline().decode('utf-8').strip().split(',')
         #print(str_line)
+        
+        # aiming return "{bearing},{pitch},{roll},{cal_stat},{temp}"
         return (
             [float(value) for value in str_line]
             if len(str_line) == 5
