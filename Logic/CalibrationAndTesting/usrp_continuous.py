@@ -24,7 +24,7 @@ import usrp
 
 rx_samples = []
 freq = 500e6
-gain = 22
+gain = 20
 
 usrpUT = usrp.USRP(rx_center_freq=freq, rx_gain=gain)
 

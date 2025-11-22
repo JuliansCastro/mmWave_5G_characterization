@@ -576,12 +576,172 @@ def spectrum(usrp_test:USRP, tx = False, signal = np.ones(10)):
         usrp_test.stopRxThread()
 
 if __name__ == "__main__":
-    try:
-        usrp_UT = USRP(rx_gain=20)
-        spectrum(usrp_UT)
-    except KeyboardInterrupt:
-        print("Process Interrupted")
-        usrp_UT.stopRxThread()
+    # try:
+    #     usrp_UT = USRP(rx_gain=20)
+    #     spectrum(usrp_UT)
+    # except KeyboardInterrupt:
+    #     print("Process Interrupted")
+    #     usrp_UT.stopRxThread()
+
+    import numpy as np
+    from scipy.signal import welch
+    from PyQt5 import QtWidgets, QtCore
+    import pyqtgraph as pg
+    import sys
+    import instrument
+
+    # Parámetros SDR
+    #fs = 2e6       # Frecuencia de muestreo
+    #N = 4096       # Número de muestras por bloque
+    #f0 = 500e6     # Frecuencia central
+
+    # # Simulación de señal IQ
+    # def acquire_signal():
+    #     t = np.arange(N) / fs
+    #     signal = np.exp(1j * 2 * np.pi * 100e3 * t)  # Tono a 100 kHz
+    #     noise = 0.1 * (np.random.randn(N) + 1j * np.random.randn(N))
+    #     return signal + noise
+
+    # Ventana principal
+    class PSDViewer(QtWidgets.QMainWindow):
+        def __init__(self):
+            super().__init__()
+            self.setWindowTitle("PSD en tiempo real - SDR")
+
+            # Valores iniciales
+            self.fs = 2e6
+            self.N = 4096
+            self.f0 = 500e6     # Hz
+            self.gain = 0       # dB
+            self.power = -60    # dBm
+
+            # Widget principal
+            central_widget = QtWidgets.QWidget()
+            layout = QtWidgets.QVBoxLayout(central_widget)
+
+            # Gráfico
+            self.graph = pg.PlotWidget(title="Densidad espectral de potencia")
+            self.curve = self.graph.plot(pen='y')
+            self.label = pg.TextItem(anchor=(0,1), color='cyan')
+            self.graph.addItem(self.label)
+            self.graph.setLabel('bottom', 'Frecuencia [MHz]')
+            self.graph.setLabel('left', 'PSD [dB/Hz]')
+            layout.addWidget(self.graph)
+
+            # Campos de configuración
+            config_layout = QtWidgets.QHBoxLayout()
+            self.gain_input = QtWidgets.QLineEdit(str(self.gain))
+            self.power_input = QtWidgets.QLineEdit(str(self.power))
+            self.f0_input = QtWidgets.QLineEdit(str(self.f0))
+            config_layout.addWidget(QtWidgets.QLabel("gain [dB]:"))
+            config_layout.addWidget(self.gain_input)
+            config_layout.addWidget(QtWidgets.QLabel("Gen. Power [dBm]:"))
+            config_layout.addWidget(self.power_input)
+            config_layout.addWidget(QtWidgets.QLabel("f₀ [Hz]:"))
+            config_layout.addWidget(self.f0_input)
+
+            # Botón de asignación
+            self.assign_button = QtWidgets.QPushButton("Asignar configuración")
+            self.assign_button.clicked.connect(self.update_config)
+            config_layout.addWidget(self.assign_button)
+            layout.addLayout(config_layout)
+
+            self.setCentralWidget(central_widget)
+
+            # Timer de actualización
+            self.timer = QtCore.QTimer()
+            self.timer.timeout.connect(self.update_plot)
+            self.timer.start(100)
+
+            # USRP initialization
+            self.usrp = USRP(rx_center_freq=self.f0, rx_gain=40)
+            self.usrp.startRxThread()
+
+            # Generator initialization
+            self.generator = instrument.RSGenerator("172.177.75.22",frequency=self.f0,power=self.power)
+
+        import numpy as np
+
+        def cut_center_array(self, arr):
+            """
+            Elimina el elemento central de un arreglo 1D si su longitud es impar,
+            o los dos elementos centrales si es par.
+            
+            Parámetros:
+                arr (np.ndarray): Arreglo unidimensional de entrada.
+            
+            Retorna:
+                np.ndarray: Arreglo sin el/los elemento(s) centrales.
+            """
+            if arr.ndim != 1:
+                raise ValueError("La función solo acepta arreglos unidimensionales.")
+            
+            n = len(arr)
+            
+            if n == 0:
+                return arr  # Nada que quitar
+            
+            if n % 2 == 0:
+                # Longitud par: quitar dos elementos centrales
+                i1 = n // 2 - 1
+                i2 = n // 2
+                return np.delete(arr, [i1, i2])
+            else:
+                # Longitud impar: quitar el elemento central
+                i = n // 2
+                return np.delete(arr, i)
+
+        def update_plot(self):
+            #signal = self.usrp.getSamples()
+            f, Pxx = welch(self.usrp.rx_samples, fs=self.fs, nperseg=1024, return_onesided=False, scaling='spectrum')
+            f_shifted = f + self.f0
+            psd_db = 10*np.log10(Pxx/100)
+
+            # Reordenar frecuencias y PSD para evitar la línea de unión
+            order = np.argsort(f_shifted)
+            f_sorted = f_shifted[order]
+            psd_sorted = psd_db[order]
+
+            # Graficar ordenado
+            self.curve.setData(f_sorted / 1e6, psd_sorted)#10 * np.log10(Pxx))
+
+            # Pico máximo
+            idx_max = np.argmax(psd_db)
+            f_peak = f_shifted[idx_max] / 1e6
+            peak_value = psd_db[idx_max]
+            self.label.setText(f"Pico: {f_peak:.2f} MHz\n{peak_value:.1f} dB/Hz")
+            self.label.setPos(f_peak, peak_value)
+
+        def update_config(self):
+            try:
+                self.gain = float(self.gain_input.text())
+                self.power = int(self.power_input.text())
+                self.f0 = float(self.f0_input.text())
+                print("Configuración actualizada:")
+                print(f"  gain = {self.gain} Hz")
+                self.usrp.updateRxGain(new_gain=self.gain)
+                print(f"  power  = {self.power} dB")
+                self.generator.power=self.power
+                print(f"  f₀ = {self.f0} Hz")
+                self.generator.frequency=self.f0
+                self.generator.on
+            except ValueError:
+                print("Error: ingrese valores numéricos válidos.")
+
+
+        def closeEvent(self, event):
+            self.usrp.stopRxThread()
+            self.generator.off
+            print("Rutina de liberación")  # Aquí iría la liberación de puertos SDR, buffers, etc.
+            event.accept()
+
+
+    # Lanzamiento
+    if __name__ == '__main__':
+        app = QtWidgets.QApplication(sys.argv)
+        viewer = PSDViewer()
+        viewer.show()
+        sys.exit(app.exec_())
 
 
 
