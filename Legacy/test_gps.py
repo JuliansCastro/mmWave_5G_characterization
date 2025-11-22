@@ -30,7 +30,7 @@ from time import sleep
 from pytictoc import TicToc
 
 
-gps_port = "COM4"
+gps_port = "COM3"
 
 try:
     timer = TicToc()

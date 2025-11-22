@@ -31,7 +31,7 @@ from filewriter import FileCSV
 
 
 try:
-    gps_port = "COM4"
+    gps_port = "COM3"
     
     gps_file = FileCSV(name="Data/Meas_GPS/GPS", 
                        frequency=None, 

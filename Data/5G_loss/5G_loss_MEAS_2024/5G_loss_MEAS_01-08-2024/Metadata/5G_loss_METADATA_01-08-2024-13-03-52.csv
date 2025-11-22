@@ -1,0 +1,2 @@
+time_elapsed,mumber_of_readings,reading_rate,time_per_reading,usrp_rx_thread,aiming_thread,gps_thread
+110.15465839998797,9475,86.01542321449425,11.62582200527373,"<Thread(USRP_RX_THREAD, stopped daemon 14084)>",,"<Thread(GPS_THREAD, stopped daemon 22972)>"

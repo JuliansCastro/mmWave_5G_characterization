@@ -59,7 +59,7 @@ def oneShot():
     try:
         # Serial ports
         aim_port = "COM8"
-        gps_port = "COM9"
+        gps_port = "COM11"
 
         chronometer = TicToc()
 
